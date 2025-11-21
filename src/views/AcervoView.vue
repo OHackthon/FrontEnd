@@ -1,16 +1,33 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useAcervoStore } from '../stores/acervo'; // Importando a Store
 import SideFilter from '../components/SideFilter.vue';
 import AcervoCard from '../components/AcervoCard.vue';
 import NavBar from '../components/NavBar.vue';
+import { useItensAcervoStore } from '@/stores/itensAcervo'; 
+import { useLoading } from '@/stores/loading';
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
+const loadingStore = useLoading()
+const itensAcervoStore = useItensAcervoStore();
 const route = useRoute();
 const router = useRouter();
 const store = useAcervoStore(); // Iniciando a Store
 
-// --- 1. ESTADOS LOCAIS ---
+onMounted( async () => {
+  loadingStore.isLoading = true;
+  await itensAcervoStore.fetchItens();
+  loadingStore.isLoading = false
+});
+
+// --- 2. OPÇÕES DE FILTRO ---
+const opcoesFiltro = ref({
+  colecao: ["Tiburtius", "Sambaqui", "Etnologia", "Outros"],
+  materia: ["Mineral", "Vegetal", "Animal"],
+  subtipo: ["Cerâmica", "Rocha Lascada", "Rocha Polida", "Cestaria", "Adorno", "Osso", "Fóssil"],
+});
+
 const filtrosAtivos = ref({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] });
 const paginaAtual = ref(1);
 const itensPorPagina = ref(9); // Padrão 9 para grid 3x3
@@ -141,17 +158,9 @@ const limparTudo = () => {
 
         </div>
 
-        <!-- LOADING DA STORE -->
-        <div v-if="store.loading" class="py-20 text-center">
-          <div class="inline-block w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin mb-2">
-          </div>
-          <p class="text-xs uppercase tracking-widest text-gray-400">Carregando acervo...</p>
-        </div>
-
-        <!-- GRID DE CARDS (Alimentado pela Store) -->
-        <div v-else-if="itensDaPagina.length > 0"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-          <AcervoCard v-for="item in itensDaPagina" :key="item.id" :item="item" />
+        <!-- Grid de Cards -->
+        <div  v-if="itensAcervoStore.itensAcervo.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          <AcervoCard v-for="item in itensAcervoStore.itensAcervo" :key="item.id" :item="item" />
         </div>
 
         <!-- Empty State -->
