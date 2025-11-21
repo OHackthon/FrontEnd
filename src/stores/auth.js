@@ -98,8 +98,8 @@ export const useAuth = defineStore('auth', () => {
 
   const logout = () => {
     user.value = null
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
     error.value = null
   }
 

@@ -47,11 +47,19 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
   })
 
   const fetchItens = async () => {
-    loadingStore.isLoading = true
-    const data = await itensAcervoApi.fetchItens()
-    itensAcervo.value = Array.isArray(data.results) ? [...data.results] : [...data]
-    loadingStore.isLoading = false
+  loadingStore.isLoading = true
+  const data = await itensAcervoApi.fetchItens()
+  
+  if (Array.isArray(data.results)) {
+    itensAcervo.value = [...data.results]
+  } else if (Array.isArray(data)) {
+    itensAcervo.value = [...data]
+  } else {
+    itensAcervo.value = []
   }
+  
+  loadingStore.isLoading = false
+}
 
   const createItemAcervo = async (itemAcervo) => {
     try {

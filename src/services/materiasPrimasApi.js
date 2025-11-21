@@ -2,16 +2,16 @@ import API from '@/services/axiosInterceptor.js'
 
 export default class MateriasPrimasApi {
     async fetchMateriasPrimas() {
-        const { data } = await API.get('materias-primas/')
-        return data
+        const { response } = await API.get('materias-primas/')
+        return response.data
     }
     async createMateriaPrima(materiaPrima) {
-        const { data } = await API.post('materias-primas/', materiaPrima)
-        return data
+        const { response } = await API.post('materias-primas/', materiaPrima)
+        return response.data
     }
     async updateMateriaPrima(materiaPrima) {
-        const { data } = await API.put(`materias-primas/${materiaPrima.id}/`, materiaPrima)
-        return data
+        const { response } = await API.put(`materias-primas/${materiaPrima.id}/`, materiaPrima)
+        return response.data
     }
     async deleteMateriaPrima(id) {
         await API.delete(`materias-primas/${id}/`)
