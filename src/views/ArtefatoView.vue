@@ -14,6 +14,8 @@ const formData = reactive({
     description: '',     // Descrição
     notes: ''            // Observações
 });
+const materialOptions = ['Animal', 'Vegetal', 'Mineral', 'Outro'];
+
 
 // --- Estado de UI e Validação ---
 const errors = reactive({});
@@ -160,8 +162,7 @@ const handleCancel = () => {
 <template>
     <div class="min-h-screen bg-[#F8F5F1] font-sans text-[#1C1C1C]">
 
-        <!-- ================= CABEÇALHO ================= -->
-         
+        
 
         <!-- ================= CONTEÚDO PRINCIPAL ================= -->
         <main class="mx-auto w-full max-w-7xl flex-grow px-4 py-8 md:px-8">
@@ -237,22 +238,45 @@ const handleCancel = () => {
 
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
                             <!-- Matéria-prima -->
-                            <div>
-                                <label class="mb-1.5 block text-sm font-medium text-gray-700">Matéria-prima <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" v-model="formData.material" placeholder="ex.: Cerâmica, Osso..."
-                                    :class="{ 'border-red-500 ring-1 ring-red-500': errors.material }"
-                                    class="w-full rounded-md border border-transparent bg-[#F2EFE9] px-4 py-3 text-sm text-gray-700 placeholder-gray-400 transition focus:border-[#0F3D3E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3D3E]">
-                                <span v-if="errors.material" class="mt-1 text-xs text-red-500">{{ errors.material
-                                    }}</span>
-                            </div>
+                           <div>
+    <label class="mb-1.5 block text-sm font-medium text-gray-700">
+        Matéria-prima <span class="text-red-500">*</span>
+    </label>
+
+    <div class="relative">
+        <select
+            v-model="formData.material"
+            :class="{ 'border-red-500 ring-1 ring-red-500': errors.material }"
+            class="w-full cursor-pointer appearance-none rounded-md border border-transparent bg-[#F2EFE9] px-4 py-3 text-sm text-gray-700 transition focus:border-[#0F3D3E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3D3E]"
+        >
+            <option value="" disabled>Selecione...</option>
+            <option v-for="opt in materialOptions" :key="opt" :value="opt">
+                {{ opt }}
+            </option>
+        </select>
+
+        <!-- Ícone do select -->
+        <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </div>
+    </div>
+
+    <span v-if="errors.material" class="mt-1 text-xs text-red-500">
+        {{ errors.material }}
+    </span>
+</div>
+
 
                             <!-- Sub-tipo -->
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-700">Sub-tipo <span
                                         class="text-red-500">*</span></label>
                                 <input type="text" v-model="formData.subtype"
-                                    placeholder="ex.: Tigela, Ponta de flecha..."
+                                    placeholder="ex.: Cerâmica, Osso..."
                                     :class="{ 'border-red-500 ring-1 ring-red-500': errors.subtype }"
                                     class="w-full rounded-md border border-transparent bg-[#F2EFE9] px-4 py-3 text-sm text-gray-700 placeholder-gray-400 transition focus:border-[#0F3D3E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3D3E]">
                                 <span v-if="errors.subtype" class="mt-1 text-xs text-red-500">{{ errors.subtype
@@ -273,7 +297,7 @@ const handleCancel = () => {
                             <!-- Datação (Opcional) -->
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-700">Datação <span
-                                        class="text-gray-400 font-normal">(Opcional)</span></label>
+                                        class="text-gray-400 font-normal">(Se houver)</span></label>
                                 <input type="text" v-model="formData.dating" placeholder="ex.: Século XVIII, 1000 a.C."
                                     class="w-full rounded-md border border-transparent bg-[#F2EFE9] px-4 py-3 text-sm text-gray-700 placeholder-gray-400 transition focus:border-[#0F3D3E] focus:bg-white focus:outline-none focus:ring-1 focus:ring-[#0F3D3E]">
                             </div>
