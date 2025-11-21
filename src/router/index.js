@@ -5,6 +5,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
+      component: () => import('../views/HomeView.vue'),
+    },
+    {
+      path: '/artefato'
       name: 'artefato',
       component: () => import('../views/ArtefatoView.vue'),
     },
@@ -18,6 +23,17 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/RegisterView.vue'),
     },
+    // Rotas adicionais para o menu e cards (simulação)
+   
+   
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue'), // Mock view
+    },
+  
+     
+  
     {
       path: '/acervototal',
       name: 'acervototal',
