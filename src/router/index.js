@@ -29,7 +29,32 @@ const router = createRouter({
   
      
   
+    {
+      path: '/acervototal',
+      name: 'acervototal',
+      component: () => import('../views/AcervoView.vue'),
+    },
+    {
+      path: '/sidefilter',
+      name: 'sidefilter',
+      component: () => import('../components/SideFilter.vue'),
+    },
+    {
+      path: '/acervocard',
+      name: 'acervocard',
+      component: () => import('../components/AcervoCard.vue'),
+    },
+    {
+      path: '/navbar',
+      name: 'navbar',
+      component: () => import('../components/NavBar.vue'),
+    }
   ],
+
+scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition;
+    return { top: 0 };
+  }
 })
 
 export default router
