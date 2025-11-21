@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import CategoriasApi from '@/services/categoriasApi'
+import CategoriaAcervoApi from '@/services/categoriaAcervoApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 
 const loadingStore = useLoading()
 const modalStore = useModalStore()
-const categoriasApi = new CategoriasApi()
+const categoriaAcervoApi = new CategoriaAcervoApi()
 
 export const useCategoriasStore = defineStore('categorias', () => {
   const categorias = ref([])
@@ -18,7 +18,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
 
   const fetchCategorias = async () => {
     loadingStore.isLoading = true
-    const data = await categoriasApi.fetchCategorias()
+    const data = await categoriaAcervoApi.fetchCategorias()
     categorias.value = Array.isArray(data.results) ? [...data.results] : [...data]
     loadingStore.isLoading = false
   }
@@ -26,7 +26,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
   const createCategoria = async (categoria) => {
     try {
       loadingStore.isLoading = true
-      const created = await categoriasApi.createCategoria(categoria)
+      const created = await categoriaAcervoApi.createCategoria(categoria)
       categorias.value.push(created)
 
       newCategoria.value = {
@@ -47,7 +47,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
     try {
       loadingStore.isLoading = true
 
-      await categoriasApi.updateCategoria(modalStore.editingItem)
+      await categoriaAcervoApi.updateCategoria(modalStore.editingItem)
 
       await fetchCategorias()
       modalStore.closeCreateModal()
@@ -62,7 +62,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
     try {
       loadingStore.isLoading = true
 
-      await categoriasApi.deleteCategoria(id)
+      await categoriaAcervoApi.deleteCategoria(id)
       categorias.value = categorias.value.filter((categoria) => categoria.id !== id)
 
       modalStore.closeConfirmDeleteModal()

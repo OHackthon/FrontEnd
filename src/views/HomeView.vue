@@ -1,12 +1,11 @@
 <script setup>
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import HeaderNav from '../components/HeaderNav.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 
-import CategoryGrid from '../components/CategoryGrid.vue'
+import CategoryGrid from '../components/ColecaoGrid.vue'
 import FooterSection from '../components/FooterSection.vue'
 
-// Importação das funções necessárias (embora nem todas sejam usadas aqui, seguindo a regra estrita de importação)
-import { ref, reactive, computed, watch, onMounted } from 'vue'
 
 </script>
 
@@ -16,7 +15,6 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
     
     <main class="flex-grow">
       <HeroBanner />
-      <SearchBar />
 
       <CategoryGrid />
       
