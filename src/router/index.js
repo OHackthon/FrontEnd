@@ -22,23 +22,31 @@ const router = createRouter({
       path: '/sidefilter',
       name: 'sidefilter',
       component: () => import('../components/SideFilter.vue'),
+      props: { options: { colecao: [], materia: [], subtipo: [] } },
     },
     {
       path: '/acervocard',
       name: 'acervocard',
       component: () => import('../components/AcervoCard.vue'),
+      props: { item: { id: 999, titulo: 'Teste' } },
     },
     {
       path: '/navbar',
       name: 'navbar',
       component: () => import('../components/NavBar.vue'),
-    }
+    },
+    {
+      path: '/item/:id',
+      name: 'item-detail',
+      component: () => import('../views/ItemDetailView.vue'),
+      props: true,
+    },
   ],
 
-scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) return savedPosition;
-    return { top: 0 };
-  }
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    return { top: 0 }
+  },
 })
 
 export default router
