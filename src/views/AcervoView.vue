@@ -3,26 +3,22 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router'; 
 import SideFilter from '../components/SideFilter.vue';
 import AcervoCard from '../components/AcervoCard.vue';
-import NavBar from '../components/NavBar.vue'; 
+import NavBar from '../components/NavBar.vue';
+import { useItensAcervoStore } from '@/stores/itensAcervo'; 
+import { useLoading } from '@/stores/loading';
+import Loading from 'vue-loading-overlay'
+import 'vue-loading-overlay/dist/css/index.css'
 
+const loadingStore = useLoading()
+const itensAcervoStore = useItensAcervoStore();
 const route = useRoute();
 const router = useRouter();
 
-// --- 1. DADOS MOCKADOS ---
-const todosItens = ref([
-  { id: 101, titulo: "Urna Funerária Marajoara", colecao: "Tiburtius", materia: "Mineral", subtipo: "Cerâmica", img: "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=500" },
-  { id: 102, titulo: "Ponta de Flecha", colecao: "Sambaqui", materia: "Mineral", subtipo: "Rocha Lascada", img: "https://images.unsplash.com/photo-1596627727361-9f93976378c2?w=500" },
-  { id: 103, titulo: "Vaso Decorativo", colecao: "Tiburtius", materia: "Mineral", subtipo: "Cerâmica", img: "https://images.unsplash.com/photo-1578749556920-4143e2d47ded?w=500" },
-  { id: 104, titulo: "Cesto Trançado", colecao: "Etnologia", materia: "Vegetal", subtipo: "Cestaria", img: "https://images.unsplash.com/photo-1516216628859-9bccecab13ca?w=500" },
-  { id: 105, titulo: "Fragmento Ósseo", colecao: "Sambaqui", materia: "Animal", subtipo: "Osso", img: "https://images.unsplash.com/photo-1619961306546-5c2299098945?w=500" },
-  { id: 106, titulo: "Colar de Conchas", colecao: "Sambaqui", materia: "Animal", subtipo: "Adorno", img: "https://images.unsplash.com/photo-1606103920295-9a091573f160?w=500" },
-  { id: 107, titulo: "Machadinha Polida", colecao: "Sambaqui", materia: "Mineral", subtipo: "Rocha Polida", img: "https://images.unsplash.com/photo-1523554888454-84137e72d3ce?w=500" },
-  { id: 108, titulo: "Estatueta Zoomorfa", colecao: "Tiburtius", materia: "Mineral", subtipo: "Cerâmica", img: "https://images.unsplash.com/photo-1518998053901-5348d3969105?w=500" },
-  { id: 109, titulo: "Pilão de Pedra", colecao: "Outros", materia: "Mineral", subtipo: "Rocha Polida", img: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=500" },
-  { id: 110, titulo: "Adorno Plumário", colecao: "Etnologia", materia: "Animal", subtipo: "Adorno", img: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=500" },
-  { id: 111, titulo: "Fóssil Peixe", colecao: "Tiburtius", materia: "Animal", subtipo: "Fóssil", img: "https://images.unsplash.com/photo-1550948537-130a1ce83314?w=500" },
-  { id: 112, titulo: "Cerâmica Guarani", colecao: "Outros", materia: "Mineral", subtipo: "Cerâmica", img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=500" },
-]);
+onMounted( async () => {
+  loadingStore.isLoading = true;
+  await itensAcervoStore.fetchItens();
+  loadingStore.isLoading = false
+});
 
 // --- 2. OPÇÕES DE FILTRO ---
 const opcoesFiltro = ref({
@@ -57,7 +53,7 @@ watch([filtrosAtivos, itensPorPagina], () => {
 });
 
 const itensProcessados = computed(() => {
-  return todosItens.value.filter(item => {
+  return itensAcervoStore.itensAcervo.filter(item => {
     const termoBusca = (route.query.q || "").toLowerCase();
     const superStringItem = [
       item.titulo, item.colecao, item.materia, item.subtipo, item.id.toString()
@@ -75,11 +71,6 @@ const itensProcessados = computed(() => {
 });
 
 const totalPaginas = computed(() => Math.ceil(itensProcessados.value.length / itensPorPagina.value));
-
-const itensDaPagina = computed(() => {
-  const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
-  return itensProcessados.value.slice(inicio, inicio + itensPorPagina.value);
-});
 
 const mudarPagina = (p) => { paginaAtual.value = p; window.scrollTo({ top: 0, behavior: 'smooth' }); };
 const limparTudo = () => {
@@ -107,8 +98,6 @@ const limparTudo = () => {
             <span v-if="route.query.q">Busca: <strong>"{{ route.query.q }}"</strong> • </span>
             <span><strong>{{ itensProcessados.length }}</strong> resultados</span>
             
-            <!-- CORREÇÃO: Removi o botão "Limpar Filtros" duplicado daqui. 
-                 Agora usamos apenas o botão que está dentro do componente SideFilter. -->
           </div>
 
           <!-- Seletor de Paginação -->
@@ -125,8 +114,8 @@ const limparTudo = () => {
         </div>
 
         <!-- Grid de Cards -->
-        <div v-if="itensDaPagina.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-          <AcervoCard v-for="item in itensDaPagina" :key="item.id" :item="item" />
+        <div  v-if="itensAcervoStore.itensAcervo.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          <AcervoCard v-for="item in itensAcervoStore.itensAcervo" :key="item.id" :item="item" />
         </div>
         
         <!-- Empty State -->
