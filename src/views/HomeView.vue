@@ -12,7 +12,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 
 <template>
   <div class="min-h-screen flex flex-col bg-white text-gray-900">
-    <HeaderNav />
+    
     
     <main class="flex-grow">
       <HeroBanner />
@@ -39,6 +39,6 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 
     </main>
     
-    <FooterSection />
+    
   </div>
 </template>
