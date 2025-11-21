@@ -7,6 +7,7 @@ const route = useRoute();
 
 const termoBusca = ref("");
 
+// Sincroniza o input com a URL ao carregar
 onMounted(() => {
   if (route.query.q) {
     termoBusca.value = route.query.q;
@@ -14,17 +15,20 @@ onMounted(() => {
 });
 
 let timeout = null;
+
 const aoDigitar = () => {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    if (route.name === 'acervo') {
+    // Se já estiver na tela de acervo, atualiza a busca sem recarregar
+    if (route.name === 'acervototal') {
       router.replace({ query: { ...route.query, q: termoBusca.value || undefined } });
     }
   }, 300);
 };
 
 const forcarBusca = () => {
-  router.push({ name: 'acervo', query: { ...route.query, q: termoBusca.value } });
+  // Força a ida para a tela de acervo com o termo
+  router.push({ name: 'acervototal', query: { ...route.query, q: termoBusca.value } });
 };
 
 const irParaHome = () => {
@@ -33,7 +37,7 @@ const irParaHome = () => {
 };
 
 const voltar = () => {
-  router.back();
+  router.back(); 
 };
 </script>
 
@@ -41,6 +45,7 @@ const voltar = () => {
   <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm">
     <div class="max-w-[1600px] mx-auto px-4 h-16 flex items-center justify-between gap-4">
       
+      <!-- ESQUERDA: Voltar + Logo -->
       <div class="flex items-center gap-4">
         
         <button 
@@ -67,13 +72,14 @@ const voltar = () => {
         </div>
       </div>
 
+      <!-- DIREITA: Busca -->
       <div class="relative flex-1 max-w-md">
         <input 
           v-model="termoBusca" 
           @input="aoDigitar"
           @keydown.enter="forcarBusca"
           type="text" 
-          placeholder="Pesquisar coleções..." 
+          placeholder="Pesquisar no acervo..." 
           class="w-full h-10 pl-10 pr-4 bg-gray-50 border border-gray-200 rounded-full text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all" 
         />
         <span class="absolute left-3.5 top-2.5 text-gray-400">
