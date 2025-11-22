@@ -145,7 +145,6 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
   const createItemAcervo = async (itemAcervo) => {
     try {
       loadingStore.isLoading = true
-      console.log('=== ENVIANDO PARA API ===')
       console.log('Payload:', itemAcervo)
       const created = await itensAcervoApi.createItemAcervo(itemAcervo)
       itensAcervo.value.push(created)
@@ -163,7 +162,7 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
         procedencia: '',
         datacao: '',
         estado_conservacao: '',
-        diensoes: '',
+        dimensoes: '',
         peso_g: null,
         descricao: '',
         inteireza: '',
