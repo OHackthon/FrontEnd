@@ -3,7 +3,9 @@ import { ref } from 'vue'
 import ReservasApi from '@/services/reservasApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
+import { useAuth } from '@/stores/auth.js'
 
+const authStore = useAuth()
 const loadingStore = useLoading()
 const modalStore = useModalStore()
 const reservasApi = new ReservasApi()
@@ -19,10 +21,10 @@ export const useReservasStore = defineStore('reservas', () => {
   const newReserva = ref({
     id: null,
     item: null, //fk
-    responsavel: null, //fk
+    responsavel: authStore.user, //fk
     local_origem: null, //fk
     local_destino: null, //fk
-    data_movimentacao: null,
+    data_movimentacao: new Date().toISOString(),
     tipo_movimento: '',
   })
 
@@ -49,7 +51,6 @@ export const useReservasStore = defineStore('reservas', () => {
         tipo_movimento: '',
       }
 
-      modalStore.closeCreateModal()
       loadingStore.isLoading = false
     } catch (err) {
       console.error('Error creating reserva', err)
