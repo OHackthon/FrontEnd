@@ -3,8 +3,10 @@ import { ref, reactive } from 'vue'
 
 const isMenuOpen = ref(false)
 const navItems = reactive([
-  { name: 'Coleções', path: '/collections' },
+  { name: 'Início', path: '/' },
   { name: 'Sobre o Museu', path: '/about' },
+  { name: 'Visitação', path: '/visitavirtual' },
+
   
 ])
 </script>
