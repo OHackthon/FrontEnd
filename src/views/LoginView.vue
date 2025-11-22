@@ -19,12 +19,7 @@ const password = ref("");
 </script>
 
 <template>
-  <loading
-    v-model:active="loadingStore.isLoading"
-    :is-full-page="loadingStore.fullPage"
-    color="#000000"
-    loader="dots"
-  />
+ 
 
   <div class="h-screen flex bg-white overflow-hidden">
     
