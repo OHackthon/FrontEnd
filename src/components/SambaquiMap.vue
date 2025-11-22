@@ -347,83 +347,94 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col min-h-screen bg-gray-50 font-sans text-gray-800">
-        <HeaderNav />
+    <div class="flex flex-col font-sans text-gray-800">
 
-        <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full mt-12 mb-16">
-            
+        <main class="px-4 md:px-8 max-w-7xl mx-auto w-full mt-12 mb-0">
+
             <div class="max-w-7xl mx-auto">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Sambaqui Explorer Map (OpenStreetMap)</h1>
-                <p class="text-gray-600 mb-6">Visualização de sítios arqueológicos por região. Total de {{ SAMBAQUIS.length - 1 }} sambaquis mapeados.</p>
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Sambaqui Explorer Map (OpenStreetMap)</h1>
+                <p class="text-gray-600 mb-6">Visualização de sítios arqueológicos por região. Total de {{
+                    SAMBAQUIS.length - 1 }} sambaquis mapeados.</p>
             </div>
 
-            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[35vh] lg:h-[40vh]">
-                
-                <div class="lg:col-span-1 space-y-3 flex flex-col controls-column">
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-gray-400 shrink-0">
-                         <label for="search-input" class="block text-sm font-bold text-gray-700 mb-2">Busca Avançada (Nome, Cidade, Lat/Lon)</label>
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[40vh]">
+
+                <div class="lg:col-span-1 flex flex-col space-y-3">
+
+                    <!-- Card de busca -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-gray-400 flex-1">
+                        <label for="search-input" class="block text-sm font-bold text-gray-700 mb-2">Busca Avançada
+                            (Nome, Cidade, Lat/Lon)</label>
                         <div class="relative">
-                             <input 
-                                id="search-input"
-                                type="text"
-                                :value="searchInput"
-                                @input="handleSearchInput"
-                                @keyup.enter="performSearch"
-                                placeholder="Ex: Rio Comprido ou -26.31 -48.86"
-                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2.5 transition-all text-sm pl-4 pr-10"
-                            >
-                            <button @click="performSearch" class="absolute right-0 top-0 mt-2.5 mr-3 text-gray-500 hover:text-teal-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            <input id="search-input" type="text" :value="searchInput" @input="handleSearchInput"
+                                @keyup.enter="performSearch" placeholder="Ex: Rio Comprido ou -26.31 -48.86"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2.5 transition-all text-sm pl-4 pr-10">
+                            <button @click="performSearch"
+                                class="absolute right-0 top-0 mt-2.5 mr-3 text-gray-500 hover:text-teal-600">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-teal-500 shrink-0">
+
+                    <!-- Card de região -->
+                    <div class="bg-white p-3 rounded-xl shadow-lg border-t-4 border-teal-500 flex-1">
                         <label for="region-select" class="block text-sm font-bold text-gray-700 mb-3">
-                            <svg class="w-5 h-5 inline mr-1 -mt-1 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <svg class="w-5 h-10 inline mr-1 -mt-1 text-teal-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
                             Escolha a Região
                         </label>
-                        <select 
-                            id="region-select"
-                            v-model="selectedRegion" 
-                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2.5 transition-all text-sm mb-4"
-                        >
+                        <select id="region-select" v-model="selectedRegion"
+                            class="w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2.5 transition-all text-sm mb-4">
                             <option v-for="city in uniqueCities" :key="city" :value="city">{{ city }}</option>
                         </select>
-                        
-                        <button 
-                            @click="selectedRegion = 'Mostrar Todos'"
-                            class="w-full bg-linear-to-r from-gray-700 to-gray-900 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9c-1.657 0-3 4.03-3 9s1.343 9 3 9z"/></svg>
+
+                        <button @click="selectedRegion = 'Mostrar Todos'"
+                            class="w-full bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9c-1.657 0-3 4.03-3 9s1.343 9 3 9z" />
+                            </svg>
                             Ver Todos os Sítios
                         </button>
                     </div>
 
-                    <div v-if="searchResults.length > 0" class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 flex-1 overflow-y-auto">
+                    <!-- Card de resultados de busca -->
+                    <div v-if="searchResults.length > 0"
+                        class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 flex-1 overflow-y-auto">
                         <h3 class="font-bold text-gray-900 mb-3 border-b pb-2">
                             Resultados da Busca ({{ searchResults.length }})
                         </h3>
-                         <table class="min-w-full text-left text-sm divide-y divide-gray-200">
-                             <thead>
-                                 <tr class="text-xs text-gray-500 uppercase">
-                                     <th class="py-2 font-medium">Nome</th>
-                                     <th class="py-2 font-medium">Cidade</th>
-                                     <th class="py-2 font-medium text-center">Ação</th>
-                                 </tr>
-                             </thead>
-                             <tbody>
-                                 <tr v-for="sambaqui in searchResults" :key="sambaqui.id" class="hover:bg-teal-50 cursor-pointer transition-colors" @click="selectSambaquiOnMap(sambaqui, true)">
-                                     <td class="py-2 font-medium text-gray-800">{{ sambaqui.nome }}</td>
-                                     <td class="py-2 text-gray-600">{{ sambaqui.cidade }}</td>
-                                     <td class="py-2 text-center text-teal-600 font-semibold">→</td>
-                                 </tr>
-                             </tbody>
-                         </table>
+                        <table class="min-w-full text-left text-sm divide-y divide-gray-200">
+                            <thead>
+                                <tr class="text-xs text-gray-500 uppercase">
+                                    <th class="py-2 font-medium">Nome</th>
+                                    <th class="py-2 font-medium">Cidade</th>
+                                    <th class="py-2 font-medium text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="sambaqui in searchResults" :key="sambaqui.id"
+                                    class="hover:bg-teal-50 cursor-pointer transition-colors"
+                                    @click="selectSambaquiOnMap(sambaqui, true)">
+                                    <td class="py-2 font-medium text-gray-800">{{ sambaqui.nome }}</td>
+                                    <td class="py-2 text-gray-600">{{ sambaqui.cidade }}</td>
+                                    <td class="py-2 text-center text-teal-600 font-semibold">→</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex-1 overflow-y-auto" :class="{'min-h-[120px]': searchResults.length === 0}">
+
+                    <!-- Card de detalhes -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex-1 overflow-y-auto"
+                        :class="{ 'min-h-[120px]': searchResults.length === 0 }">
                         <h3 class="font-bold text-gray-900 mb-2 border-b pb-2">
                             Detalhes do Sítio Clicado
                         </h3>
@@ -437,9 +448,10 @@ onUnmounted(() => {
                                 <p>Latitude: {{ activeSambaqui.lat.toFixed(6) }}</p>
                                 <p>Longitude: {{ activeSambaqui.lon.toFixed(6) }}</p>
                             </div>
-                            
+
                             <div class="pt-2">
-                                <button @click="selectSambaquiOnMap(activeSambaqui, true)" class="text-sm text-blue-600 hover:underline">
+                                <button @click="selectSambaquiOnMap(activeSambaqui, true)"
+                                    class="text-sm text-blue-600 hover:underline">
                                     Centralizar no Mapa
                                 </button>
                             </div>
@@ -450,45 +462,50 @@ onUnmounted(() => {
                     </div>
                 </div>
 
+                <!-- Mapa -->
                 <div class="lg:col-span-2 h-full relative">
                     <div ref="mapContainer" class="map-container">
-                        <div v-if="!mapLoaded" class="absolute inset-0 flex items-center justify-center bg-gray-200/80 rounded-xl">
+                        <div v-if="!mapLoaded"
+                            class="absolute inset-0 flex items-center justify-center bg-gray-200/80 rounded-xl">
                             <p class="text-gray-600 font-medium p-4 text-center">
                                 {{ statusMessage }}
-                                <span v-if="!statusMessage.includes('ERRO')" class="block mt-2">Carregando mapa...</span>
-                                <span v-if="statusMessage.includes('ERRO')" class="text-sm text-red-500 block mt-2">Tente recarregar a página.</span>
+                                <span v-if="!statusMessage.includes('ERRO')" class="block mt-2">Carregando
+                                    mapa...</span>
+                                <span v-if="statusMessage.includes('ERRO')"
+                                    class="text-sm text-red-500 block mt-2">Tente recarregar a página.</span>
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
-        
-        <FooterSection />
     </div>
 </template>
 
 <style scoped>
-.controls-column {
-    height: auto;
+/* Altura total do container principal do grid para responsividade */
+/* h-[calc(100vh-185px)] COMPENSA O HEAD + PADDING PARA O LAYOUT MAIS APERTADO */
+.h-\[calc\(100vh-185px\)\] {
+    height: calc(100vh - 12px); 
 }
 
+/* Estilo para garantir que o mapa tenha a altura correta E ocupe a coluna */
 .map-container {
-    height: 100%;
+    height: 100%; /* Ocupa 100% da altura definida pelo grid pai */
     width: 100%;
-    border-radius: 0.75rem;
+    border-radius: 0.75rem; 
     box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.1);
-    position: relative;
+    position: relative; 
 }
 
+/* Corrige layout no mobile onde o grid colapsa */
 @media (max-width: 1023px) {
-    .controls-column {
-        height: auto;
+    /* No mobile, a altura é reduzida, mas o mapa ainda precisa de uma altura definida */
+    .h-\[calc\(100vh-185px\)\] {
+        height: auto; /* Deixa a altura flexível no mobile */
     }
-
     .map-container {
-        height: 60vh;
-        min-height: 400px;
+        height: 60vh; /* Altura fixa para o mapa no mobile */
     }
 }
 </style>

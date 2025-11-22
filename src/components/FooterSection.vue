@@ -16,7 +16,7 @@ const quickLinks = reactive([
 </script>
 
 <template>
-  <footer class="bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 mt-12">
+  <footer class="bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200 bottom-0 relative">
     <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
