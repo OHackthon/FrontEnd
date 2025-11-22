@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch, onUnmounted } from 'vue';
-import NavBar from '../components/NavBar.vue';
+import NavBar from '../components/HeaderNav.vue';
+import HeroBanner from '@/components/HeroBanner.vue';
+import HeaderNav from '../components/HeaderNav.vue';
 
 const iframeLoaded = ref(false);
 const isMaximized = ref(false);
@@ -29,7 +31,7 @@ onUnmounted(() => {
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col font-sans text-gray-900">
 
-    <NavBar />
+    <HeaderNav />
 
     <main class="flex-1 flex flex-col items-center w-full transition-all duration-500"
       :class="isMaximized ? 'justify-start p-0' : 'justify-start px-4 pt-2 pb-8'">
@@ -42,7 +44,7 @@ onUnmounted(() => {
       <div class="relative transition-all duration-500 ease-in-out bg-black" :class="[
         isMaximized
           ? 'fixed top-16 left-0 w-full h-[calc(100vh-64px)] z-40 rounded-none border-0'
-          : 'w-full max-w-5xl aspect-video rounded-t-xl border-x-12px border-t-12px border-b-24px border-gray-800 shadow-2xl'
+          : 'w-full max-w-5xl aspect-video rounded-t-xl shadow-2xl border-[12px] border-b-[24px] border-gray-800'
       ]">
 
         <div class="absolute top-4 right-4 z-50">
