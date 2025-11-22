@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import LocalizacaoApi from '@/services/localizacaoApi'
+import LocalizacoesApi from '@/services/localizacaoApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 

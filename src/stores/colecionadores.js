@@ -35,7 +35,6 @@ export const useColecionadoresStore = defineStore('colecionadores', () => {
         contato: '',
       }
 
-      modalStore.closeCreateModal()
       loadingStore.isLoading = false
     } catch (err) {
       console.error('Error creating colecionador', err)
@@ -43,14 +42,13 @@ export const useColecionadoresStore = defineStore('colecionadores', () => {
     }
   }
 
-  const updateColecionador = async () => {
+  const updateColecionador = async (colecionador) => {
     try {
       loadingStore.isLoading = true
 
-      await colecionadoresApi.updateColecionador(modalStore.editingItem)
+      await colecionadoresApi.updateColecionador(colecionador)
 
       await fetchColecionadores()
-      modalStore.closeCreateModal()
       loadingStore.isLoading = false
     } catch (err) {
       console.error('Error updating colecionador: ', err)

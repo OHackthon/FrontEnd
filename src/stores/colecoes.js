@@ -16,8 +16,9 @@ export const useColecoesStore = defineStore('colecoes', () => {
     id: null,
     nome_colecao: '',
     colecionador: null,
-    descricao: '', // Corrigindo para 'descricao'
-    data_registro: null,
+    descricao: '',
+    data_registro: new Date().toISOString(),
+    colecionador_data: null,
   })
 
   const fetchColecoes = async () => {
@@ -44,6 +45,13 @@ export const useColecoesStore = defineStore('colecoes', () => {
       (colecao) => colecao.nome_colecao.toLowerCase().trim() === nomeColecao.toLowerCase().trim(),
     )
   }
+
+  function findColecoesByColecionador(nomeColecionador) {
+    return colecoes.value
+      .filter(c => c.colecionador.nome === nomeColecionador)
+      .map(c => c.nome_colecao).join(', ') || 'Nenhuma coleção encontrada';
+  }
+
 
   const createColecao = async (colecao) => {
     try {
@@ -107,14 +115,13 @@ export const useColecoesStore = defineStore('colecoes', () => {
     }
   }
 
-  const updateColecao = async () => {
+  const updateColecao = async (colecao) => {
     try {
       loadingStore.isLoading = true
 
-      await colecoesApi.updateColecao(modalStore.editingItem)
+      await colecoesApi.updateColecao(colecao)
 
       await fetchColecoes()
-      modalStore.closeCreateModal()
       loadingStore.isLoading = false
     } catch (err) {
       console.error('Error updating colecao: ', err)
@@ -144,6 +151,6 @@ export const useColecoesStore = defineStore('colecoes', () => {
     createColecao,
     updateColecao,
     deleteColecao,
-    checkDuplicateColecao,
+    findColecoesByColecionador
   }
 })
