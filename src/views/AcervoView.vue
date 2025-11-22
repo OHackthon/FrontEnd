@@ -3,7 +3,6 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SideFilter from "../components/SideFilter.vue";
 import AcervoCard from "../components/AcervoCard.vue";
-import NavBar from "../components/NavBar.vue";
 import { useItensAcervoStore } from "@/stores/itensAcervo";
 import { useLoading } from "@/stores/loading";
 import Loading from "vue-loading-overlay";
@@ -93,11 +92,6 @@ const opcoesFiltro = computed(() => {
   };
 });
 
-// === USO DOS FILTROS DA STORE ===
-// Em vez de usar filtrosAtivos local, usamos da store
-// const filtrosAtivos = ref({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] });
-
-// --- 3. CONTROLE DE PAGINAÇÃO ---
 const paginaAtual = ref(1);
 const itensPorPagina = ref(6);
 
@@ -122,25 +116,15 @@ const syncFiltersFromUrl = () => {
 onMounted(syncFiltersFromUrl);
 watch(() => route.query, syncFiltersFromUrl);
 
-// Resetar página ao mudar filtros
 watch([() => itensAcervoStore.filtrosAtivos, itensPorPagina], () => {
   paginaAtual.value = 1;
 });
 
-// === SISTEMA DE FILTROS - INTEGRAÇÃO FRONT-END ===
-// ✅ ESTE ARQUIVO MOSTRA COMO OS FILTROS FUNCIONAM NO FRONTEND
-
-// === ITENS PROCESSADOS COM FILTRO DA STORE + BUSCA ===
-// ✅ AQUI OS FILTROS SÃO APLICADOS AOS DADOS
-// 1. Primeiro aplica os filtros da store (checkboxes do sidebar)
-// 2. Depois aplica o filtro de busca por texto
 const itensProcessados = computed(() => {
-  // Primeiro aplica os filtros da store, depois a busca por texto
   return itensAcervoStore.itensAcervoFiltrados.filter((item) => {
     const termoBusca = (route.query.q || "").toLowerCase();
     if (termoBusca === "") return true;
 
-    // ✅ CAMPOS PESQUISÁVEIS POR TEXTO
     const superStringItem = [
       item.titulo,
       item.nome,
@@ -156,7 +140,6 @@ const itensProcessados = computed(() => {
   });
 });
 
-// === ITENS PAGINADOS ===
 const itensPaginados = computed(() => {
   const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
   const fim = inicio + itensPorPagina.value;
@@ -177,7 +160,6 @@ const limparTudo = () => {
   router.replace({ query: { q: route.query.q } });
 };
 
-// === FUNÇÃO PARA ATUALIZAR FILTROS ===
 const atualizarFiltros = (novosFiltros) => {
   itensAcervoStore.atualizarFiltros(novosFiltros);
 };

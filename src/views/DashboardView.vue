@@ -85,7 +85,7 @@ function formatarData(dataIso) {
                   <p class="text-sm text-gray-700 leading-relaxed">
           <span class="block mb-1">
             <span class="text-gray-500">Responsável:</span>
-            <span class="font-bold text-gray-900 ml-1">{{ reserva.responsavel.name }}</span>
+            <span class="font-bold text-gray-900 ml-1">{{ reserva.responsavel_data }}</span>
           </span>
                     <span class="block mb-1">
             <span class="text-gray-500">Movimento:</span>
@@ -93,11 +93,11 @@ function formatarData(dataIso) {
           </span>
                     <span class="block mb-1">
             <span class="text-gray-500">Origem:</span>
-            <span class="font-semibold text-gray-900 ml-1">{{ reserva.local_origem.nome_local }}</span>
+            <span class="font-semibold text-gray-900 ml-1">{{ reserva.local_origem_data.nome_local }}</span>
           </span>
                     <span class="block">
             <span class="text-gray-500">Destino:</span>
-            <span class="font-semibold text-gray-900 ml-1">{{ reserva.local_destino.nome_local }}</span>
+            <span class="font-semibold text-gray-900 ml-1">{{ reserva.local_destino_data.nome_local }}</span>
           </span>
                   </p>
                 </div>

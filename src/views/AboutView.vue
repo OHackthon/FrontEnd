@@ -43,6 +43,5 @@ import FooterSection from '../components/FooterSection.vue'
       </div>
     </main>
 
-    <FooterSection />
   </div>
 </template>

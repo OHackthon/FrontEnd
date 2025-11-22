@@ -10,10 +10,10 @@ const ctaText = ref("Explorar Coleções");
   <div class="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
     <div
       class="absolute inset-0 bg-cover bg-center bg-fixed"
-      style="background-image: url('https://picsum.photos/1920/1080?random=1')"
+      style="background-image: url('https://phoenix.org.br/wp-content/uploads/2018/12/cropped-sea-nature-sand-rock-ocean-structure-1245322-pxhere.com_-e1544738198309.jpg')"
       aria-label="Imagem de fundo imponente do Museu do Sambaqui"
     >
-      <div class="absolute inset-0 bg-black opacity-30"></div>
+      <div class="absolute inset-0 bg-black opacity-50"></div>
     </div>
 
     <div

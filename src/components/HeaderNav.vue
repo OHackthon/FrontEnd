@@ -1,15 +1,17 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuth } from '@/stores/auth.js'
 
 const authStore = useAuth()
 const isMenuOpen = ref(false)
 const navItems = reactive([
   { name: 'Início', path: '/' },
+  { name: 'Visita virtual', path: '/visita-virtual' },
   { name: 'Sobre o Museu', path: '/about' },
   { name: 'Dashboard', path: '/dashboard' },
-  
+
 ])
+
 
 onMounted(async () => {
   await authStore.fetchCurrentUser()
@@ -17,7 +19,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 bg-white shadow-sm border-b border-gray-100">
+  <header class="sticky top-0 z-9999 bg-white shadow-sm border-b border-gray-100">
     <div class="px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-20">
       
       <router-link to="/" class="flex items-center">

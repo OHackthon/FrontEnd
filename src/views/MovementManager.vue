@@ -52,8 +52,8 @@ const reservasFiltradas = computed(() => {
   if (search) {
     const s = search.toLowerCase()
     data = data.filter(r =>
-      r.item.nome.toLowerCase().includes(s) ||
-      (r.item.numero_acervo && r.item.numero_acervo.toString().includes(s))
+      r.item_data.nome.toLowerCase().includes(s) ||
+      (r.item_data.numero_acervo && r.item.numero_acervo.toString().includes(s))
     )
   }
   if (tipo) {

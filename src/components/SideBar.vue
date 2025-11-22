@@ -32,17 +32,20 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <aside class="hidden w-64 flex-col border-r border-gray-200 bg-white py-6 md:flex fixed h-full z-20 overflow-y-auto">
+  <aside class="hidden w-64 flex-col border-r border-gray-200 bg-white py-6 md:flex fixed h-full overflow-y-auto">
     
     <!-- Logo Area -->
+
     <div class="px-6 mb-10">
+    <router-link to="/">
       <div class="flex items-center gap-3">
         <!-- Imagem da Logo -->
-        
+
         <div class="flex flex-col">
           <img src="../assets/images/INTEIROPRETO.png" alt="">
         </div>
       </div>
+    </router-link>
     </div>
 
     <!-- Menu de Navegação -->

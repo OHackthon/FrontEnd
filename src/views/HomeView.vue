@@ -5,7 +5,6 @@ import HeroBanner from '../components/HeroBanner.vue'
 import SambaquiMap from '@/components/SambaquiMap.vue'
 
 import CategoryGrid from '../components/ColecaoGrid.vue'
-import FooterSection from '../components/FooterSection.vue'
 
 </script>
 

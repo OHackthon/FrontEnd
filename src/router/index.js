@@ -62,7 +62,7 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/visitavirtual',
+      path: '/visita-virtual',
       name: 'visita-virtual',
       component: () => import('../views/VisitaVirtualView.vue'),
     },

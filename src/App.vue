@@ -7,6 +7,5 @@ import NotificationContainer from './components/NotificationContainer.vue';
 <template>
   <router-view />
   <NotificationContainer />
-  <FooterSection />
 
 </template>
