@@ -37,14 +37,7 @@ const handleRegister = async () => {
 };
 </script>
 
-<template>
-  <loading
-    v-model:active="loadingStore.isLoading"
-    :is-full-page="loadingStore.fullPage"
-    color="#000000"
-    loader="dots"
-  />
-  
+<template> 
   <div class="h-screen flex bg-white overflow-hidden">
     
     <div class="hidden lg:flex lg:w-1/2 bg-gray-100 relative overflow-hidden order-2 lg:order-1">
