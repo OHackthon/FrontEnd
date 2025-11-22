@@ -10,11 +10,8 @@ const emit = defineEmits(['logout']);
 const menuItems = [
   { label: 'Dashboard', path: '/dashboard', icon: 'layout' },
   { label: 'Gestão', path: '/colecionador', icon: 'collection' }, // Rota atualizada conforme solicitado
-  { label: 'Itens do Acervo', path: '/acervototal', icon: 'box' },
   { label: 'Categorias', path: '/categorias', icon: 'category' },
   { label: 'Reservas', path: '/reservas', icon: 'arrows' },
-  { label: 'Usuários', path: '/usuarios', icon: 'users' },
- 
 ];
 
 // Função para verificar se a rota está ativa

@@ -29,13 +29,12 @@ const handleLogin = async () => {
     
     <div class="hidden lg:flex lg:w-1/2 bg-gray-100 relative overflow-hidden">
       <img 
-        src="https://images.unsplash.com/photo-1615529182904-14819c35db37?q=80&w=1200" 
+        src="@/assets/images/maispedra.jpg"
         alt="Acervo Arqueológico" 
         class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out"
       />
       <div class="absolute inset-0 bg-black/30"></div>
       <div class="relative z-10 p-12 flex flex-col justify-end h-full text-white">
-        <h2 class="text-4xl font-serif italic font-light mb-2">Gestão de Acervo Digital.</h2>
       </div>
     </div>
 

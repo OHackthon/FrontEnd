@@ -8,6 +8,7 @@ import { useItensAcervoStore } from "@/stores/itensAcervo";
 import { useLoading } from "@/stores/loading";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
+import HeaderNav from '@/components/HeaderNav.vue'
 
 const loadingStore = useLoading();
 const itensAcervoStore = useItensAcervoStore();
@@ -184,7 +185,7 @@ const atualizarFiltros = (novosFiltros) => {
 
 <template>
   <div class="min-h-screen bg-white font-sans text-gray-900 pb-20">
-    <NavBar />
+    <HeaderNav />
 
     <div class="max-w-[1600px] mx-auto px-6 flex flex-col lg:flex-row pt-8">
       <SideFilter

@@ -1,14 +1,19 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useAuth } from '@/stores/auth.js'
 
+const authStore = useAuth()
 const isMenuOpen = ref(false)
 const navItems = reactive([
   { name: 'Início', path: '/' },
   { name: 'Sobre o Museu', path: '/about' },
-  { name: 'Visitação', path: '/visitavirtual' },
-
+  { name: 'Dashboard', path: '/dashboard' },
   
 ])
+
+onMounted(async () => {
+  await authStore.fetchCurrentUser()
+})
 </script>
 
 <template>
@@ -32,12 +37,18 @@ const navItems = reactive([
         >
           {{ item.name }}
         </router-link>
-        <router-link 
+        <router-link
+          v-if="!authStore.isLoggedIn"
           to="/login"
           class="ml-4 px-4 py-2 text-sm font-semibold bg-gray-900 text-white hover:bg-gray-700 transition duration-150 ease-in-out"
         >
           Entrar
         </router-link>
+        <router-link
+          v-else
+          to="/dashboard"
+          class="ml-4 px-4 py-2 text-sm font-semibold bg-gray-900 rounded-full text-white hover:bg-gray-700 transition duration-150 ease-in-out"
+        ><span class="text-white">A</span></router-link>
       </nav>
 
       <button 
@@ -60,13 +71,6 @@ const navItems = reactive([
           class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition duration-150 ease-in-out"
         >
           {{ item.name }}
-        </router-link>
-        <router-link 
-          to="/login" 
-          @click="isMenuOpen = false"
-          class="mt-2 block w-full text-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-700 transition duration-150 ease-in-out"
-        >
-          Entrar
         </router-link>
       </div>
     </nav>

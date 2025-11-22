@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted } from 'vue'
 import CategoryCard from './ColecaoCard.vue'
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 import { useColecoesStore } from '@/stores/colecoes';
 
 const colecoesStore = useColecoesStore();
@@ -27,7 +29,8 @@ onMounted( async () => {
       <CategoryCard 
         v-for="colecao in colecoesStore.colecoes" 
         :key="colecao.id" 
-        :colecao="colecao" 
+        :colecao="colecao"
+        @click="router.push(`/acervototal`)"
       />
     </div>
   </div>

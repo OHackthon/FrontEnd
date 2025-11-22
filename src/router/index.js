@@ -62,7 +62,7 @@ const router = createRouter({
     },
     {
       path: '/item/:id',
-      name: 'item-detail',
+      name: 'detalhe-item',
       component: () => import('../views/ItemDetailView.vue'),
       props: true,
     },
