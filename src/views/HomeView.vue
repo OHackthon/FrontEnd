@@ -11,7 +11,7 @@ import FooterSection from '../components/FooterSection.vue'
 
 <template>
   <div class="min-h-screen flex flex-col bg-white text-gray-900">
-    <HeaderNav />
+    
     
     <main class="flex-grow">
       <HeroBanner />
@@ -37,6 +37,6 @@ import FooterSection from '../components/FooterSection.vue'
 
     </main>
     
-    <FooterSection />
+    
   </div>
 </template>

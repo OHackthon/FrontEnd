@@ -39,6 +39,11 @@ const router = createRouter({
       name: 'acervototal',
       component: () => import('../views/AcervoView.vue'),
     },
+     {
+      path: '/colecionador',
+      name: 'colecionador',
+      component: () => import('../views/CollectorPage.vue'),
+    },
     {
       path: '/sidefilter',
       name: 'sidefilter',
