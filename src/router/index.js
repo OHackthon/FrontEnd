@@ -9,11 +9,6 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue'),
     },
     {
-      path: '/artefato',
-      name: 'artefato',
-      component: () => import('../views/ArtefatoView.vue'),
-    },
-    {
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
@@ -23,17 +18,11 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/RegisterView.vue'),
     },
-    // Rotas adicionais para o menu e cards (simulação)
-   
-   
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue'), // Mock view
+      component: () => import('../views/AboutView.vue'),
     },
-  
-     
-  
     {
       path: '/acervototal',
       name: 'acervototal',
@@ -43,6 +32,21 @@ const router = createRouter({
       path: '/colecionador',
       name: 'colecionador',
       component: () => import('../views/CollectorPage.vue'),
+    },
+    {
+      path: '/colecionador',
+      name: 'colecionador',
+      component: () => import('../views/CollectorPage.vue'),
+    },
+    {
+      path: '/artefato',
+      name: 'artefato',
+      component: () => import('../views/ArtefatoView.vue'),
+    },
+    {
+      path: '/movimentacao',
+      name: 'movimentacao',
+      component: () => import('../views/MovementManager.vue'),
     },
     {
       path: '/sidefilter',

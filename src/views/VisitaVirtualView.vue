@@ -3,7 +3,7 @@ import { ref, watch, onUnmounted } from 'vue';
 import NavBar from '../components/NavBar.vue';
 
 const iframeLoaded = ref(false);
-const isMaximized = ref(false); // Estado para controlar tela cheia
+const isMaximized = ref(false);
 
 const onLoad = () => {
   iframeLoaded.value = true;
@@ -13,7 +13,6 @@ const toggleFullscreen = () => {
   isMaximized.value = !isMaximized.value;
 };
 
-// --- TRAVA DE SCROLL ---
 watch(isMaximized, (val) => {
   if (val) {
     document.body.style.overflow = 'hidden';
