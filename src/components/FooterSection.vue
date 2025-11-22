@@ -23,7 +23,7 @@ const quickLinks = reactive([
         
         <div>
           <router-link to="/" class="text-xl font-serif font-light tracking-wider text-gray-900 uppercase">
-            Museu do **Sambaqui**
+            Museu do Sambaqui
           </router-link>
           <p class="mt-4 text-sm text-gray-600 font-light">
             Preservando a história milenar dos construtores de sambaquis do litoral brasileiro.

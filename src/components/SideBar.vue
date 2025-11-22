@@ -10,7 +10,8 @@ const emit = defineEmits(['logout']);
 const menuItems = [
   { label: 'Dashboard', path: '/dashboard', icon: 'layout' },
   { label: 'Gestão', path: '/colecionador', icon: 'collection' }, // Rota atualizada conforme solicitado
-  { label: 'Itens do Acervo', path: '/acervo', icon: 'box' },
+  { label: 'Itens do Acervo', path: '/acervototal', icon: 'box' },
+  { label: 'Categorias', path: '/categorias', icon: 'category' },
   { label: 'Reservas', path: '/reservas', icon: 'arrows' },
   { label: 'Usuários', path: '/usuarios', icon: 'users' },
  
@@ -73,6 +74,10 @@ const handleLogout = () => {
 
           <template v-if="item.icon === 'box'">
             <path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>
+          </template>
+
+          <template v-if="item.icon === 'category'">
+            <path d="M19 11H5m14-7H5a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zM9 7v4m6-4v4"/>
           </template>
 
           <template v-if="item.icon === 'arrows'">

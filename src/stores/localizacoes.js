@@ -6,7 +6,7 @@ import { useModalStore } from '@/stores/modal.js'
 
 const loadingStore = useLoading()
 const modalStore = useModalStore()
-const localizacoesApi = new LocalizacoesApi()
+const localizacoesApi = new LocalizacaoApi()
 
 export const useLocalizacoesStore = defineStore('localizacoes', () => {
   const localizacoes = ref([])
