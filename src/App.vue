@@ -1,14 +1,11 @@
 <script setup>
+import HeaderNav from './components/HeaderNav.vue';
+import FooterSection from './components/FooterSection.vue';
+import NotificationContainer from './components/NotificationContainer.vue';
 </script>
 
 <template>
-  <header>
-    <!-- nav -->
-  </header>
-
   <router-view />
+  <NotificationContainer />
 
-  <footer>
-  <!-- footer -->
-  </footer>
 </template>

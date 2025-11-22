@@ -4,6 +4,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'home',
+      component: () => import('../views/HomeView.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../views/LoginView.vue'),
@@ -14,11 +19,69 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue'),
     },
     {
-      path: '/teste',
-      name: 'filtroTeste',
-      component: () => import('../views/testeView.vue'),
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue'),
+    },
+    {
+      path: '/acervototal',
+      name: 'acervototal',
+      component: () => import('../views/AcervoView.vue'),
+    },
+    {
+      path: '/colecionador',
+      name: 'colecionador',
+      component: () => import('../views/CollectorPage.vue'),
+    },
+    {
+      path: '/artefato',
+      name: 'artefato',
+      component: () => import('../views/ArtefatoView.vue'),
+    },
+    {
+      path: '/reservas',
+      name: 'reservas',
+      component: () => import('../views/MovementManager.vue'),
+    },
+    {
+      path: '/sidefilter',
+      name: 'sidefilter',
+      component: () => import('../components/SideFilter.vue'),
+      props: { options: { colecao: [], materia: [], subtipo: [] } },
+    },
+    {
+      path: '/acervocard',
+      name: 'acervocard',
+      component: () => import('../components/AcervoCard.vue'),
+      props: { item: { id: 999, titulo: 'Teste' } },
+    },
+    {
+      path: '/item/:id',
+      name: 'detalhe-item',
+      component: () => import('../views/ItemDetailView.vue'),
+      props: true,
+    },
+    {
+      path: '/visita-virtual',
+      name: 'visita-virtual',
+      component: () => import('../views/VisitaVirtualView.vue'),
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue'),
+    },
+    {
+      path: '/categorias',
+      name: 'categorias',
+      component: () => import('../views/CategoriaManagerView.vue'),
     },
   ],
+
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    return { top: 0 }
+  },
 })
 
 export default router

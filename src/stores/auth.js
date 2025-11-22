@@ -13,9 +13,7 @@ export const useAuth = defineStore('auth', () => {
   const accessToken = ref(localStorage.getItem('access_token') || null)
   const refreshToken = ref(localStorage.getItem('refresh_token') || null)
 
-  const isLoggedIn = computed(() => {
-    return !!accessToken.value // !! statement return true if user is not null, empty string or 0
-  })
+  const isLoggedIn = computed(() => !!localStorage.getItem('access_token'))
 
   const firstLetter = computed(() => {
     return user.value?.name?.charAt(0).toUpperCase() || null
@@ -98,8 +96,8 @@ export const useAuth = defineStore('auth', () => {
 
   const logout = () => {
     user.value = null
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
     error.value = null
   }
 
