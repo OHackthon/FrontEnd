@@ -5,6 +5,7 @@ import HeroBanner from '../components/HeroBanner.vue'
 
 import CategoryGrid from '../components/ColecaoGrid.vue'
 import FooterSection from '../components/FooterSection.vue'
+ 
 
 
 </script>
@@ -12,7 +13,8 @@ import FooterSection from '../components/FooterSection.vue'
 <template>
   <div class="min-h-screen flex flex-col bg-white text-gray-900">
     
-    
+    <HeaderNav />
+
     <main class="flex-grow">
       <HeroBanner />
 
