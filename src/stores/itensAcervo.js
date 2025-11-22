@@ -145,6 +145,8 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
   const createItemAcervo = async (itemAcervo) => {
     try {
       loadingStore.isLoading = true
+      console.log('=== ENVIANDO PARA API ===')
+      console.log('Payload:', itemAcervo)
       const created = await itensAcervoApi.createItemAcervo(itemAcervo)
       itensAcervo.value.push(created)
 
@@ -174,8 +176,12 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
       modalStore.closeCreateModal()
       loadingStore.isLoading = false
     } catch (err) {
-      console.error('Error creating item acervo', err)
+      console.error('=== ERRO AO CRIAR ITEM ===')
+      console.error('Erro:', err)
+      console.error('Response data:', err.response?.data)
+      console.error('Status:', err.response?.status)
       loadingStore.isLoading = false
+      throw err
     }
   }
 

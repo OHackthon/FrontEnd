@@ -9,26 +9,39 @@ const modalStore = useModalStore()
 const materiasPrimasApi = new MateriasPrimasApi()
 
 export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
-
   const materiasPrimas = ref([])
 
-  const materiaPrimaOptions = ref([
-    { value: 'ANIMAL', label: 'Animal' },
-    { value: 'VEGETAL', label: 'Vegetal' },
-    { value: 'MINERAL', label: 'Mineral' },
-    { value: 'OUTRO', label: 'Outro' },
-  ])
+  // Removido temporariamente para debug
+  // const materiaPrimaOptions = ref([
+  //   { value: 'ANIMAL', label: 'Animal' },
+  //   { value: 'VEGETAL', label: 'Vegetal' },
+  //   { value: 'MINERAL', label: 'Mineral' },
+  //   { value: 'OUTRO', label: 'Outro' },
+  // ])
 
   const newMateriaPrima = ref({
     id: null,
-    nome: ''
+    nome: '',
   })
 
   const fetchMateriasPrimas = async () => {
     loadingStore.isLoading = true
-    const data = await materiasPrimasApi.fetchMateriasPrimas()
-    materiasPrimas.value = Array.isArray(data.results) ? [...data.results] : [...data]
-    loadingStore.isLoading = false
+    try {
+      // Busca as choices estáticas
+      const choicesData = await materiasPrimasApi.fetchMateriasPrimasChoices()
+      materiasPrimas.value = choicesData
+    } catch (error) {
+      console.warn('Erro ao buscar matérias-primas, usando dados padrão:', error)
+      // Fallback para dados padrão
+      materiasPrimas.value = [
+        { value: 'ANIMAL', label: 'Animal' },
+        { value: 'VEGETAL', label: 'Vegetal' },
+        { value: 'MINERAL', label: 'Mineral' },
+        { value: 'OUTRO', label: 'Outro' },
+      ]
+    } finally {
+      loadingStore.isLoading = false
+    }
   }
 
   const createMateriaPrima = async (materiaPrima) => {
@@ -39,7 +52,7 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
 
       newMateriaPrima.value = {
         id: null,
-        nome: ''
+        nome: '',
       }
 
       modalStore.closeCreateModal()
@@ -59,7 +72,6 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
       await fetchMateriasPrimas()
       modalStore.closeCreateModal()
       loadingStore.isLoading = false
-
     } catch (err) {
       console.error('Error updating materia prima: ', err)
       loadingStore.isLoading = false
@@ -71,7 +83,7 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
       loadingStore.isLoading = true
 
       await materiasPrimasApi.deleteMateriaPrima(id)
-      materiasPrimas.value = materiasPrimas.value.filter(materiaPrima => materiaPrima.id !== id)
+      materiasPrimas.value = materiasPrimas.value.filter((materiaPrima) => materiaPrima.id !== id)
 
       modalStore.closeConfirmDeleteModal()
       loadingStore.isLoading = false
@@ -82,6 +94,11 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
   }
 
   return {
-    materiasPrimas, newMateriaPrima, fetchMateriasPrimas, createMateriaPrima, updateMateriaPrima, deleteMateriaPrima, materiaPrimaOptions
+    materiasPrimas,
+    newMateriaPrima,
+    fetchMateriasPrimas,
+    createMateriaPrima,
+    updateMateriaPrima,
+    deleteMateriaPrima,
   }
 })

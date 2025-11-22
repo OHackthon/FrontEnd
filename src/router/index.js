@@ -28,7 +28,7 @@ const router = createRouter({
       name: 'acervototal',
       component: () => import('../views/AcervoView.vue'),
     },
-     {
+    {
       path: '/colecionador',
       name: 'colecionador',
       component: () => import('../views/CollectorPage.vue'),
@@ -80,6 +80,11 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
+    },
+    {
+      path: '/categorias',
+      name: 'categorias',
+      component: () => import('../views/CategoriaManagerView.vue'),
     },
   ],
 
