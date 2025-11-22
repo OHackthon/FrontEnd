@@ -81,6 +81,11 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue'),
     },
+    {
+      path: '/sambaquimapa',
+      name: 'sambaqui-mapa',
+      component: () => import('../components/SambaquiMap.vue'),
+    }
   ],
 
   scrollBehavior(to, from, savedPosition) {
