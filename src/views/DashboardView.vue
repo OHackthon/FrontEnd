@@ -1,25 +1,10 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { 
-  Squares2X2Icon, 
-  BookOpenIcon, 
-  ArrowsRightLeftIcon, 
-  UsersIcon, 
-  ArrowLeftOnRectangleIcon,
-  MagnifyingGlassIcon
-} from '@heroicons/vue/24/outline';
+import SideBar from '../components/SideBar.vue'; // Ajuste o caminho conforme sua estrutura real
 
 const route = useRoute();
 const router = useRouter();
-
-// --- LÓGICA DA SIDEBAR ---
-const menuItems = [
-  { name: 'Dashboard', icon: Squares2X2Icon, path: '/' },
-  { name: 'Acervo', icon: BookOpenIcon, path: '/acervo' },
-  { name: 'Movimentação', icon: ArrowsRightLeftIcon, path: '/movimentacao' },
-  { name: 'Usuários', icon: UsersIcon, path: '/usuarios' },
-];
 
 const handleLogout = () => {
   // Adicione sua lógica de logout aqui (ex: authStore.logout())
@@ -43,10 +28,10 @@ const stats = [
 
 // --- DADOS DA ATIVIDADE RECENTE ---
 const activities = ref([
-  { id: 1, user: 'Ana', action: 'editou o Artefato', target: '#2024', time: '2 min ago', avatar: 'https://i.pravatar.cc/150?img=5' },
-  { id: 2, user: 'Roberto', action: 'adicionou um novo usuário:', target: 'Carla', time: '1 hour ago', avatar: 'https://i.pravatar.cc/150?img=3' },
-  { id: 3, user: 'Maria', action: 'exportou o relatório de', target: 'Movimentações', time: '3 hours ago', avatar: 'https://i.pravatar.cc/150?img=9' },
-  { id: 4, user: 'Ana', action: 'registrou novo artefato:', target: 'Ponta de Lança Lítica', time: 'Yesterday', avatar: 'https://i.pravatar.cc/150?img=5' },
+  { id: 1, user: 'Ana', action: 'editou o Artefato', target: '#2024', time: '2 min ago', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ana' },
+  { id: 2, user: 'Roberto', action: 'adicionou um novo usuário:', target: 'Carla', time: '1 hour ago', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Roberto' },
+  { id: 3, user: 'Maria', action: 'exportou o relatório de', target: 'Movimentações', time: '3 hours ago', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria' },
+  { id: 4, user: 'Ana', action: 'registrou novo artefato:', target: 'Ponta de Lança Lítica', time: 'Yesterday', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ana2' },
 ]);
 
 // --- LÓGICA DO FORMULÁRIO DE MOVIMENTAÇÃO ---
@@ -72,7 +57,7 @@ const submitMovement = () => {
     action: 'moveu o artefato',
     target: movementForm.artefatoId,
     time: 'Just now',
-    avatar: 'https://i.pravatar.cc/150?img=11'
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
   });
 
   // Limpa o formulário
@@ -85,51 +70,27 @@ const submitMovement = () => {
 </script>
 
 <template>
+  <!-- Wrapper Principal: Flex Row + Altura Total -->
   <div class="flex h-screen bg-[#FDFBF7] font-sans overflow-hidden">
     
-    <aside class="flex flex-col w-64 h-full bg-[#0F3D3E] text-white shadow-xl z-50">
-      <div class="flex items-center gap-3 p-6 border-b border-white/10">
-        <div class="w-10 h-10 rounded-full bg-[#ECE5D5] flex items-center justify-center text-[#0F3D3E] font-bold text-lg shrink-0">
-          M
-        </div>
-        <div class="flex flex-col overflow-hidden">
-          <span class="text-sm font-bold leading-tight whitespace-nowrap">Museu do<br>Sambaqui</span>
-          <span class="text-xs text-gray-400">Admin System</span>
-        </div>
-      </div>
-
-      <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-        <router-link 
-          v-for="item in menuItems" 
-          :key="item.name" 
-          :to="item.path"
-          class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200 group"
-          :class="route.path === item.path ? 'bg-[#1A4D4E] text-white shadow-md' : 'text-gray-300 hover:bg-[#1A4D4E] hover:text-white'"
-        >
-          <component :is="item.icon" class="w-5 h-5 shrink-0" />
-          {{ item.name }}
-        </router-link>
-      </nav>
-
-      <div class="p-4 border-t border-white/10">
-        <button 
-          @click="handleLogout"
-          class="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-gray-300 hover:text-white hover:bg-[#1A4D4E] rounded-lg transition-colors"
-        >
-          <ArrowLeftOnRectangleIcon class="w-5 h-5 shrink-0" />
-          Logout
-        </button>
-      </div>
-    </aside>
+    <!-- 1. Sidebar (Fixa à esquerda) -->
+    <!-- Importante: Como a Sidebar tem 'fixed', ela não ocupa espaço no fluxo flex nativo.
+         Por isso, precisamos adicionar margem no conteúdo ao lado. -->
+    <SideBar /> 
     
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- 2. Wrapper de Conteúdo (Lado Direito) -->
+    <!-- md:ml-64 empurra o conteúdo para não ficar embaixo da sidebar fixa -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden md:ml-64 relative">
       
-      <header class="flex items-center justify-between px-8 py-5 bg-[#FDFBF7] shrink-0">
+      <!-- Header -->
+      <header class="flex items-center justify-between px-8 py-5 bg-[#FDFBF7] shrink-0 border-b border-gray-100/50">
         <h1 class="text-2xl font-bold text-gray-800 truncate">Welcome, Administrator</h1>
 
         <div class="flex items-center gap-6">
           <div class="relative hidden md:block">
-            <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <!-- Ícone Lupa (SVG Inline para garantir funcionamento sem dependência externa) -->
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            
             <input 
               type="text" 
               placeholder="Search..." 
@@ -140,9 +101,9 @@ const submitMovement = () => {
           <div class="relative">
             <button @click="toggleDropdown" class="focus:outline-none flex items-center">
               <img 
-                src="https://i.pravatar.cc/150?img=11" 
+                src="https://api.dicebear.com/7.x/avataaars/svg?seed=AdminUser" 
                 alt="Admin" 
-                class="w-10 h-10 rounded-full border-2 border-white shadow-sm hover:ring-2 hover:ring-[#0F3D3E] transition-all cursor-pointer"
+                class="w-10 h-10 rounded-full border-2 border-white shadow-sm hover:ring-2 hover:ring-[#0F3D3E] transition-all cursor-pointer bg-gray-200"
               />
             </button>
 
@@ -154,8 +115,10 @@ const submitMovement = () => {
         </div>
       </header>
       
-      <main class="flex-1 overflow-x-hidden overflow-y-auto p-8 pt-2">
+      <!-- Main Content (Com Scroll Interno) -->
+      <main class="flex-1 overflow-x-hidden overflow-y-auto p-8 pt-2 scroll-smooth">
         
+        <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div 
             v-for="(stat, index) in stats" 
@@ -176,13 +139,15 @@ const submitMovement = () => {
           </div>
         </div>
 
+        <!-- Split View Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
+          <!-- Atividade Recente -->
           <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-bold text-gray-800 mb-6">Atividade Recente</h2>
             <div class="flex flex-col space-y-6">
               <div v-for="item in activities" :key="item.id" class="flex items-start gap-4 pb-6 border-b border-gray-50 last:border-0 last:pb-0 last:border-none">
-                <img :src="item.avatar" :alt="item.user" class="w-10 h-10 rounded-full object-cover bg-gray-100 shrink-0" />
+                <img :src="item.avatar" :alt="item.user" class="w-10 h-10 rounded-full object-cover bg-gray-100 shrink-0 border border-gray-200" />
                 <div class="flex-1 min-w-0">
                   <p class="text-sm text-gray-700 leading-relaxed">
                     <span class="font-bold text-gray-900">{{ item.user }}</span> 
@@ -195,6 +160,7 @@ const submitMovement = () => {
             </div>
           </div>
 
+          <!-- Movimentação Rápida -->
           <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col h-full">
             <h2 class="text-lg font-bold text-gray-800 mb-6">Movimentação Rápida</h2>
             <form @submit.prevent="submitMovement" class="flex flex-col gap-5 flex-1">
@@ -204,7 +170,7 @@ const submitMovement = () => {
                   v-model="movementForm.artefatoId"
                   type="text" 
                   placeholder="Ex: #2024" 
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all placeholder-gray-400"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all placeholder-gray-400 bg-white"
                 />
               </div>
 
@@ -214,7 +180,7 @@ const submitMovement = () => {
                   v-model="movementForm.novaLocalizacao"
                   type="text" 
                   placeholder="Ex: Sala de Restauro B" 
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all placeholder-gray-400"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all placeholder-gray-400 bg-white"
                 />
               </div>
 
@@ -224,7 +190,7 @@ const submitMovement = () => {
                   v-model="movementForm.notas"
                   rows="3"
                   placeholder="Adicione uma observação..." 
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all resize-none placeholder-gray-400"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0F3D3E]/20 focus:border-[#0F3D3E] outline-none transition-all resize-none placeholder-gray-400 bg-white"
                 ></textarea>
               </div>
 
