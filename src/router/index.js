@@ -56,11 +56,6 @@ const router = createRouter({
       props: { item: { id: 999, titulo: 'Teste' } },
     },
     {
-      path: '/navbar',
-      name: 'navbar',
-      component: () => import('../components/NavBar.vue'),
-    },
-    {
       path: '/item/:id',
       name: 'item-detail',
       component: () => import('../views/ItemDetailView.vue'),
