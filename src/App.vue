@@ -1,5 +1,5 @@
 <script setup>
-import HeaderNav from  './components/HeaderNav.vue';
+import HeaderNav from './components/HeaderNav.vue';
 import FooterSection from './components/FooterSection.vue';
 import NotificationContainer from './components/NotificationContainer.vue';
 </script>
@@ -7,4 +7,6 @@ import NotificationContainer from './components/NotificationContainer.vue';
 <template>
   <router-view />
   <NotificationContainer />
+  <FooterSection />
+
 </template>
