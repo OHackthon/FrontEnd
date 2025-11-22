@@ -3,7 +3,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useLoading } from "@/stores/loading";
 import { OctagonX } from "lucide-vue-next";
-import Loading from "vue-loading-overlay";
 import { useAuth } from "@/stores/auth";
 
 import logoMuseu from "@/assets/LOGO1.png";
@@ -15,7 +14,12 @@ const authStore = useAuth();
 const email = ref("");
 const password = ref("");
 
-
+const handleLogin = async () => {
+  await authStore.login(email.value, password.value);
+  if (!authStore.error) {
+    router.push("/");
+  }
+};
 </script>
 
 <template>

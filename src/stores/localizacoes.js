@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import LocalizacoesApi from '@/services/localizacaoApi'
+import LocalizacaoApi from '@/services/localizacaoApi.js'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 
 const loadingStore = useLoading()
+const localizacaoApi = new LocalizacaoApi()
 const modalStore = useModalStore()
-const localizacoesApi = new LocalizacaoApi()
 
 export const useLocalizacoesStore = defineStore('localizacoes', () => {
   const localizacoes = ref([])
@@ -17,7 +17,7 @@ export const useLocalizacoesStore = defineStore('localizacoes', () => {
 
   const fetchLocalizacoes = async () => {
     loadingStore.isLoading = true
-    const data = await localizacoesApi.fetchLocalizacoes()
+    const data = await localizacaoApi.fetchLocalizacoes()
     localizacoes.value = Array.isArray(data.results) ? [...data.results] : [...data]
     loadingStore.isLoading = false
   }
@@ -25,7 +25,7 @@ export const useLocalizacoesStore = defineStore('localizacoes', () => {
   const createLocalizacao = async (localizacao) => {
     try {
       loadingStore.isLoading = true
-      const created = await localizacoesApi.createLocalizacao(localizacao)
+      const created = await localizacaoApi.createLocalizacao(localizacao)
       localizacoes.value.push(created)
 
       newLocalizacao.value = {
@@ -45,7 +45,7 @@ export const useLocalizacoesStore = defineStore('localizacoes', () => {
     try {
       loadingStore.isLoading = true
 
-      await localizacoesApi.updateLocalizacao(modalStore.editingItem)
+      await localizacaoApi.updateLocalizacao(modalStore.editingItem)
 
       await fetchLocalizacoes()
       modalStore.closeCreateModal()
@@ -60,7 +60,7 @@ export const useLocalizacoesStore = defineStore('localizacoes', () => {
     try {
       loadingStore.isLoading = true
 
-      await localizacoesApi.deleteLocalizacao(id)
+      await localizacaoApi.deleteLocalizacao(id)
       localizacoes.value = localizacoes.value.filter((localizacao) => localizacao.id !== id)
 
       modalStore.closeConfirmDeleteModal()
