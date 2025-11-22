@@ -71,7 +71,7 @@ const submitMovement = () => {
 
 <template>
   <!-- Wrapper Principal: Flex Row + Altura Total -->
-  <div class="flex h-screen bg-[#FDFBF7] font-sans overflow-hidden">
+  <div class="flex h-screen bg-gray-50 font-sans overflow-hidden">
     
     <!-- 1. Sidebar (Fixa à esquerda) -->
     <!-- Importante: Como a Sidebar tem 'fixed', ela não ocupa espaço no fluxo flex nativo.

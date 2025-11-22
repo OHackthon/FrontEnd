@@ -44,8 +44,8 @@ const router = createRouter({
       component: () => import('../views/ArtefatoView.vue'),
     },
     {
-      path: '/movimentacao',
-      name: 'movimentacao',
+      path: '/reservas',
+      name: 'reservas',
       component: () => import('../views/MovementManager.vue'),
     },
     {

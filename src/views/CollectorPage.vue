@@ -147,7 +147,7 @@ const openLinkModal = (item) => {
 </script>
 
 <template>
-  <div class="flex min-h-screen bg-[#F9FAFB] font-sans text-[#1C1C1C]">
+  <div class="flex min-h-screen bg-gray-50 font-sans text-[#1C1C1C]">
     
     <!-- ================= SIDEBAR (Componente) ================= -->
     <Sidebar active-page="gestao" />

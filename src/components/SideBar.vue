@@ -11,7 +11,7 @@ const menuItems = [
   { label: 'Dashboard', path: '/dashboard', icon: 'layout' },
   { label: 'Gestão', path: '/colecionador', icon: 'collection' }, // Rota atualizada conforme solicitado
   { label: 'Itens do Acervo', path: '/acervo', icon: 'box' },
-  { label: 'Movimentação', path: '/movimentacao', icon: 'arrows' },
+  { label: 'Reservas', path: '/reservas', icon: 'arrows' },
   { label: 'Usuários', path: '/usuarios', icon: 'users' },
  
 ];
