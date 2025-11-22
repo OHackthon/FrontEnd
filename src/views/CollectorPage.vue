@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import Sidebar from '../components/SideBar.vue'; 
+import Sidebar from '../components/SideBar.vue'; // Importando o novo componente
 
 // --- MOCK DATA: COLEÇÕES ---
 const collections = ref([
@@ -162,11 +162,11 @@ const openLinkModal = (item) => {
           <p class="text-gray-500 mt-1">Administre coleções, colecionadores e suas associações</p>
         </div>
         <div class="flex gap-3">
-          <button @click="openCollectionModal('create')" class="bg-[#0F3D3E]  hover:bg-[#0A2A2B] text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1">
+          <button @click="openCollectionModal('create')" class="bg-[#0F3D3E] hover:bg-[#0A2A2B] text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
             Nova Coleção
           </button>
-          <button @click="openCollectorModal('create')" class="bg-[#0F3D3E]  hover:bg-[#0A2A2B] text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1">
+          <button @click="openCollectorModal('create')" class="bg-[#0F3D3E] hover:bg-[#0A2A2B] text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
             Novo Colecionador
           </button>
@@ -218,14 +218,7 @@ const openLinkModal = (item) => {
                     <button @click="openCollectionModal('edit', col)" class="text-gray-400 hover:text-[#0F766E] transition" title="Editar">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                     </button>
-                    <!-- Visualizar -->
-                    <button class="text-gray-400 hover:text-[#0F766E] transition" title="Visualizar">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    </button>
-                    <!-- Vincular -->
-                    <button @click="openLinkModal(col)" class="text-gray-400 hover:text-[#0F766E] transition" title="Vincular Colecionador">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                    </button>
+                     
                     <!-- Excluir -->
                     <button @click="deleteCollection(col.id)" class="text-gray-400 hover:text-red-500 transition" title="Excluir">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -281,14 +274,7 @@ const openLinkModal = (item) => {
                     <button @click="openCollectorModal('edit', col)" class="text-gray-400 hover:text-[#0F766E] transition" title="Editar">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                     </button>
-                    <!-- Visualizar -->
-                    <button class="text-gray-400 hover:text-[#0F766E] transition" title="Visualizar">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                    </button>
-                    <!-- Vincular (Link) -->
-                    <button class="text-gray-400 hover:text-[#0F766E] transition" title="Gerenciar Associações">
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-                    </button>
+                    
                     <!-- Excluir -->
                     <button @click="deleteCollector(col.id)" class="text-gray-400 hover:text-red-500 transition" title="Excluir">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -306,7 +292,7 @@ const openLinkModal = (item) => {
     <!-- ================= MODAIS ================= -->
     
     <!-- Modal Coleção -->
-    <div v-if="showCollectionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+    <div v-if="showCollectionModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
           <h3 class="text-lg font-bold text-[#1C1C1C]">{{ modalMode === 'create' ? 'Nova Coleção' : 'Editar Coleção' }}</h3>
@@ -332,7 +318,7 @@ const openLinkModal = (item) => {
     </div>
 
     <!-- Modal Colecionador -->
-    <div v-if="showCollectorModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+    <div v-if="showCollectorModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
           <h3 class="text-lg font-bold text-[#1C1C1C]">{{ modalMode === 'create' ? 'Novo Colecionador' : 'Editar Colecionador' }}</h3>
@@ -358,7 +344,7 @@ const openLinkModal = (item) => {
     </div>
 
     <!-- Modal Vinculação -->
-    <div v-if="showLinkModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+    <div v-if="showLinkModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
           <h3 class="text-lg font-bold text-[#1C1C1C]">Vincular Colecionador</h3>
