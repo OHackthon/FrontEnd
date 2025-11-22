@@ -18,9 +18,7 @@ const acervoId = ref(null);
 
 // --- Estado do Formulário ---
 const formData = reactive({
-  acervo: null, // FK para acervo
   nome: "", // Título / Nome
-  imagens: [], // FK para imagens (array)
   colecao: null, // FK para coleção
   materia_prima: null, // FK para matéria-prima
   subtipo: "", // Campo de texto para subtipo
@@ -34,9 +32,6 @@ const formData = reactive({
   descricao: "", // Descrição
   inteireza: "", // Inteireza
   observacoes_curadoria: "", // Observações
-  criado_por: null, // FK para usuário (será preenchido automaticamente)
-  data_registro: null, // Data de registro (será preenchido automaticamente)
-  ultima_atualizacao: null, // Última atualização (será preenchido automaticamente)
 });
 
 // Opções estáticas
@@ -62,24 +57,25 @@ onMounted(async () => {
       categoriasStore.fetchCategorias(),
       materiasPrimasStore.fetchMateriasPrimas(),
     ]);
-    
+
     // Buscar o primeiro acervo disponível
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/acervos/', {
+      const response = await fetch("http://127.0.0.1:8000/api/acervos/", {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
       });
       const data = await response.json();
-      const acervos = Array.isArray(data) ? data : (data.results || []);
+      const acervos = Array.isArray(data) ? data : data.results || [];
+
       if (acervos.length > 0) {
         acervoId.value = acervos[0].id;
-        console.log('Acervo encontrado:', acervos[0]);
+        console.log("Acervo selecionado - ID:", acervoId.value);
       } else {
-        console.warn('Nenhum acervo encontrado');
+        console.warn("Nenhum acervo encontrado");
       }
     } catch (error) {
-      console.error('Erro ao buscar acervos:', error);
+      console.error("Erro ao buscar acervos:", error);
     }
   } catch (error) {
     console.error("Erro ao carregar dados:", error);
@@ -87,13 +83,6 @@ onMounted(async () => {
     loadingStore.isLoading = false;
   }
 });
-
-// --- Estado de UI e Validação ---
-const errors = reactive({});
-const isDragging = ref(false);
-const isSaving = ref(false);
-const showSuccessMessage = ref(false);
-const fileInput = ref(null);
 
 // Modal para adicionar categoria
 const showAddCategoriaModal = ref(false);
@@ -106,11 +95,15 @@ const newCategoria = reactive({
 const showAddColecaoModal = ref(false);
 const newColecao = reactive({
   nome_colecao: "",
-  descricao: "", // Mudando para 'descricao' ao invés de 'descricao_colecao'
+  descricao: "",
 });
 
-// Lista de imagens carregadas
+// Refs/estado adicionais usados no template e nas funções
+const isSaving = ref(false);
+const errors = reactive({});
 const images = ref([]);
+const fileInput = ref(null);
+const isDragging = ref(false);
 
 // --- Métodos de Validação ---
 const validateForm = () => {
@@ -205,75 +198,38 @@ const removeImage = (index) => {
   }
 };
 
-// --- Submissão ---
 const handleSubmit = async () => {
+  // Validação local do formulário
   if (!validateForm()) {
-    // Scroll suave para o topo em caso de erro
-    window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
 
-  // Removido a validação do acervoId temporariamente
-  // if (!acervoId.value) {
-  //   alert('Erro: Nenhum acervo disponível. Entre em contato com o administrador.');
-  //   return;
-  // }
+  if (!acervoId.value) {
+    console.error("Erro: Nenhum acervo disponível.");
+    return;
+  }
 
   isSaving.value = true;
 
   try {
-    // Preparar payload para criação do item - VERSÃO MÍNIMA PARA TESTE
+    // Monta payload a partir do formData e do acervo selecionado
     const payload = {
-      nome: formData.nome,
-      descricao: formData.descricao,
-      subtipo: formData.subtipo,
-      procedencia: formData.procedencia,
-      estado_conservacao: formData.estado_conservacao,
-      inteireza: formData.inteireza,
-      observacoes_curadoria: formData.observacoes_curadoria,
-      localizacao_atual: formData.localizacao_atual,
-      // Foreign Keys - apenas se tiverem valores válidos
-      ...(formData.colecao && { colecao: formData.colecao }),
-      ...(formData.materia_prima && { materia_prima: formData.materia_prima }),
-      ...(formData.categoria_acervo && { categoria_acervo: formData.categoria_acervo }),
-      // Campos opcionais
-      ...(formData.datacao && { datacao: formData.datacao }),
-      ...(formData.dimensoes && { dimensoes: formData.dimensoes }),
+      ...formData,
+      acervo: parseInt(acervoId.value), // Garantindo que seja um número
     };
 
     console.log("=== CADASTRO DE ARTEFATO REALIZADO ===");
     console.log("Dados do formulário:", payload);
+    console.log("acervoId.value:", acervoId.value);
+    console.log("Imagens:", images.value);
 
-    try {
-      // Chamar a API para salvar o item
-      await itensAcervoStore.createItemAcervo(payload);
-    } catch (apiError) {
-      console.error("=== ERRO DETALHADO ===");
-      console.error("Erro completo:", apiError);
-      console.error("Response:", apiError.response);
-      console.error("Data:", apiError.response?.data);
-      console.error("Status:", apiError.response?.status);
-      console.error("Headers:", apiError.response?.headers);
-      
-      // Tentar extrair mensagem específica do erro Django
-      if (apiError.response?.data) {
-        console.error("Detalhes do erro do backend:", apiError.response.data);
-      }
-      
-      throw apiError; // Re-throw para que o catch externo pegue
-    }
+    // Chama a store/api para salvar
+    await itensAcervoStore.createItemAcervo(payload);
 
-    showSuccessMessage.value = true;
-
-    // Limpar o formulário após salvamento bem-sucedido
+    // Limpar o formulário após salvamento
     resetForm();
-
-    setTimeout(() => {
-      showSuccessMessage.value = false;
-    }, 3000);
   } catch (error) {
     console.error("Erro ao salvar artefato:", error);
-    alert("Erro ao salvar o artefato. Verifique os dados e tente novamente.");
   } finally {
     isSaving.value = false;
   }
@@ -338,7 +294,7 @@ const handleAddColecao = async () => {
   try {
     const success = await colecoesStore.createColecao({
       nome_colecao: newColecao.nome_colecao.trim(),
-      descricao: newColecao.descricao.trim() || null
+      descricao: newColecao.descricao.trim() || null,
     });
 
     if (success) {
@@ -347,7 +303,8 @@ const handleAddColecao = async () => {
 
       // Encontrar a coleção recém-criada e selecioná-la automaticamente
       const novaColecao = colecoesStore.colecoes.find(
-        (col) => col.nome_colecao.toLowerCase() === newColecao.nome_colecao.toLowerCase().trim()
+        (col) =>
+          col.nome_colecao.toLowerCase() === newColecao.nome_colecao.toLowerCase().trim()
       );
 
       if (novaColecao) {
@@ -377,37 +334,6 @@ const handleCancel = () => {
   <div class="min-h-screen bg-[#F8F5F1] font-sans text-[#1C1C1C]">
     <!-- ================= CONTEÚDO PRINCIPAL ================= -->
     <main class="mx-auto w-full max-w-7xl grow px-4 py-8 md:px-8">
-      <!-- Toast de Sucesso -->
-      <transition
-        enter-active-class="transition ease-out duration-300"
-        enter-from-class="transform opacity-0 translate-y-2"
-        enter-to-class="transform opacity-100 translate-y-0"
-        leave-active-class="transition ease-in duration-200"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <div
-          v-if="showSuccessMessage"
-          class="fixed right-6 top-24 z-50 flex items-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-white shadow-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
-          <span>Artefato salvo! Verifique o console.</span>
-        </div>
-      </transition>
-
       <h1 class="mb-8 text-3xl font-bold tracking-tight text-[#1C1C1C] md:text-4xl">
         Registrar Novo Artefato
       </h1>
@@ -555,8 +481,18 @@ const handleCancel = () => {
                   class="flex h-12 w-12 items-center justify-center rounded-md bg-[#0F3D3E] text-white transition hover:bg-[#0A2A2B] focus:outline-none focus:ring-2 focus:ring-[#0F3D3E] focus:ring-offset-2"
                   title="Adicionar nova coleção"
                 >
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  <svg
+                    class="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 4v16m8-8H4"
+                    />
                   </svg>
                 </button>
               </div>
@@ -1081,9 +1017,7 @@ const handleCancel = () => {
     >
       <div class="w-full max-w-md rounded-lg bg-white shadow-xl">
         <div class="p-6">
-          <h3 class="mb-4 text-lg font-semibold text-gray-900">
-            Nova Coleção
-          </h3>
+          <h3 class="mb-4 text-lg font-semibold text-gray-900">Nova Coleção</h3>
 
           <form @submit.prevent="handleAddColecao" class="space-y-4">
             <div>
