@@ -76,6 +76,11 @@ const router = createRouter({
       name: 'visita-virtual',
       component: () => import('../views/VisitaVirtualView.vue'),
     },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue'),
+    },
   ],
 
   scrollBehavior(to, from, savedPosition) {
