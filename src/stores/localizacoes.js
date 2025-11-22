@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import LocalizacoesApi from '@/services/localizacoesApi'
+import LocalizacoesApi from '@/services/localizacaoApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 
 const loadingStore = useLoading()
 const modalStore = useModalStore()
-const localizacoesApi = new LocalizacoesApi()
+const localizacoesApi = new LocalizacaoApi()
 
 export const useLocalizacoesStore = defineStore('localizacoes', () => {
   const localizacoes = ref([])

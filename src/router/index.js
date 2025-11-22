@@ -28,11 +28,6 @@ const router = createRouter({
       name: 'acervototal',
       component: () => import('../views/AcervoView.vue'),
     },
-     {
-      path: '/colecionador',
-      name: 'colecionador',
-      component: () => import('../views/CollectorPage.vue'),
-    },
     {
       path: '/colecionador',
       name: 'colecionador',
@@ -82,10 +77,10 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue'),
     },
     {
-      path: '/sambaquimapa',
-      name: 'sambaqui-mapa',
-      component: () => import('../components/SambaquiMap.vue'),
-    }
+      path: '/categorias',
+      name: 'categorias',
+      component: () => import('../views/CategoriaManagerView.vue'),
+    },
   ],
 
   scrollBehavior(to, from, savedPosition) {
