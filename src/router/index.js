@@ -34,11 +34,6 @@ const router = createRouter({
       component: () => import('../views/CollectorPage.vue'),
     },
     {
-      path: '/colecionador',
-      name: 'colecionador',
-      component: () => import('../views/CollectorPage.vue'),
-    },
-    {
       path: '/artefato',
       name: 'artefato',
       component: () => import('../views/ArtefatoView.vue'),

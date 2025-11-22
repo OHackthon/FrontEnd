@@ -7,9 +7,9 @@ import { useColecionadoresStore } from '@/stores/colecionadores.js'
 const colecionadorStore = useColecionadoresStore()
 const colecaoStore = useColecoesStore()
 
-onMounted(() => {
-  colecaoStore.fetchColecoes()
-  colecionadorStore.fetchColecionadores()
+onMounted( async() => {
+  await colecaoStore.fetchColecoes()
+  await colecionadorStore.fetchColecionadores()
 })
 
 // --- ESTADO DA UI ---

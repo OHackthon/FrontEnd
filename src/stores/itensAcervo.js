@@ -11,86 +11,6 @@ const itensAcervoApi = new ItensAcervoApi();
 export const useItensAcervoStore = defineStore("itensAcervo", () => {
   const itensAcervo = ref([]);
 
-  // ========== SISTEMA DE FILTROS NO FRONTEND ==========
-  // ✅ AQUI ESTÁ O SISTEMA DE FILTROS FUNCIONANDO NO FRONTEND
-  // Estado dos filtros ativos (controlado pelos checkboxes do sidebar)
-  const filtrosAtivos = ref({
-    colecao: [], // Array de coleções selecionadas
-    materia: [], // Array de matérias-primas selecionadas
-    subtipo: [], // Array de subtipos selecionados
-    localizacao: [], // Array de localizações selecionadas
-    estado: [], // Array de estados de conservação selecionados
-  });
-
-  // ✅ FUNÇÃO PRINCIPAL DE FILTROS - EXECUTA EM TEMPO REAL
-  // Esta função computed é executada automaticamente sempre que:
-  // 1. Os dados do acervo mudam (itensAcervo.value)
-  // 2. Os filtros ativos mudam (filtrosAtivos.value)
-  const itensAcervoFiltrados = computed(() => {
-    return itensAcervo.value.filter((item) => {
-      // Para cada categoria de filtro, verifica se o item atende aos critérios
-      return Object.keys(filtrosAtivos.value).every((chave) => {
-        const selecionados = filtrosAtivos.value[chave];
-
-        // Se nenhum filtro está ativo para esta categoria, aceita todos os itens
-        if (!selecionados || selecionados.length === 0) return true;
-
-        // ✅ MAPEAMENTO DOS CAMPOS DO ITEM PARA OS FILTROS
-        // Mapear campos do item para as categorias de filtro
-        let valorItem = "";
-        switch (chave) {
-          case "colecao":
-            // Mapeia para o campo correto baseado na estrutura do AcervoCard.vue
-            valorItem =
-              item.colecao?.nome_colecao || item.colecao?.nome || item.colecao || "";
-            break;
-          case "materia":
-            // Mapeia para matéria-prima baseado na estrutura real
-            valorItem =
-              item.materia_prima?.nome || item.materia_prima || item.materia || "";
-            break;
-          case "subtipo":
-            // Mapeia para subtipo baseado na estrutura real
-            valorItem = item.subtipo?.termo || item.subtipo?.nome || item.subtipo || "";
-            break;
-          case "localizacao":
-            valorItem =
-              item.localizacao_atual?.nome ||
-              item.localizacao_atual ||
-              item.localizacao ||
-              "";
-            break;
-          case "estado":
-            valorItem = item.estado_conservacao || item.estado || "";
-            break;
-        }
-
-        // ✅ VERIFICA SE O VALOR DO ITEM ESTÁ NOS FILTROS SELECIONADOS
-        // Retorna true se o valor do item está na lista de selecionados
-        return selecionados.includes(valorItem);
-      });
-    });
-  });
-
-  // ✅ FUNÇÃO PARA ATUALIZAR FILTROS (chamada pelo SideFilter.vue)
-  const atualizarFiltros = (novosFiltros) => {
-    filtrosAtivos.value = { ...novosFiltros };
-    // O computed itensAcervoFiltrados será automaticamente recalculado
-  };
-
-  // ✅ FUNÇÃO PARA LIMPAR FILTROS
-  const limparFiltros = () => {
-    filtrosAtivos.value = {
-      colecao: [],
-      materia: [],
-      subtipo: [],
-      localizacao: [],
-      estado: [],
-    };
-    // O computed itensAcervoFiltrados será automaticamente recalculado
-  };
-  // ========== FIM DO SISTEMA DE FILTROS ==========
-
   const estadoOptions = ref([
     { value: "BOM", label: "Bom" },
     { value: "REGULAR", label: "Regular" },
@@ -210,10 +130,6 @@ export const useItensAcervoStore = defineStore("itensAcervo", () => {
 
   return {
     itensAcervo,
-    itensAcervoFiltrados,
-    filtrosAtivos,
-    atualizarFiltros,
-    limparFiltros,
     newItemAcervo,
     fetchItens,
     createItemAcervo,
