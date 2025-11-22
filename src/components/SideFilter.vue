@@ -1,15 +1,33 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
-  options: { type: Object, required: true }
+  options: { type: Object, required: true },
+  filtrosAtivos: { type: Object, default: () => ({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] }) }
 });
 
 const emit = defineEmits(['update:selection']);
 
+// ✅ ESTADO LOCAL DOS FILTROS SELECIONADOS SINCRONIZADO COM A STORE
+// Usa os filtros ativos da store como valor inicial
 const selected = ref({
-  colecao: [], materia: [], subtipo: [], localizacao: [], estado: []
+  colecao: [...props.filtrosAtivos.colecao],
+  materia: [...props.filtrosAtivos.materia], 
+  subtipo: [...props.filtrosAtivos.subtipo], 
+  localizacao: [...props.filtrosAtivos.localizacao], 
+  estado: [...props.filtrosAtivos.estado]
 });
+
+// ✅ SINCRONIZA QUANDO OS FILTROS DA STORE MUDAM
+watch(() => props.filtrosAtivos, (novosFiltros) => {
+  selected.value = {
+    colecao: [...novosFiltros.colecao],
+    materia: [...novosFiltros.materia],
+    subtipo: [...novosFiltros.subtipo],
+    localizacao: [...novosFiltros.localizacao],
+    estado: [...novosFiltros.estado]
+  };
+}, { deep: true });
 
 const openSections = ref({
   colecao: true, materia: true, subtipo: true, localizacao: true, estado: true
@@ -26,15 +44,23 @@ const labels = {
 
 let timeout = null;
 
+// ✅ AQUI ACONTECE A MAGIA DOS FILTROS!
+// Sempre que o usuário clica em um checkbox, este watch é acionado
+// Ele envia os filtros selecionados para o componente pai (AcervoView)
+// com um debounce de 400ms para evitar muitas chamadas desnecessárias
 watch(selected, (newVal) => {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
+    // ✅ EMITE OS FILTROS PARA O COMPONENTE PAI
+    // Este evento vai para AcervoView.vue que chama atualizarFiltros()
     emit('update:selection', JSON.parse(JSON.stringify(newVal)));
   }, 400); 
 }, { deep: true });
 
+// ✅ FUNÇÃO PARA LIMPAR TODOS OS FILTROS
 const limparFiltros = () => {
   selected.value = { colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] };
+  // O watch vai automaticamente emitir os filtros vazios para o componente pai
 };
 </script>
 

@@ -20,14 +20,53 @@ onMounted( async () => {
   loadingStore.isLoading = false
 });
 
-// --- 2. OPÇÕES DE FILTRO ---
-const opcoesFiltro = ref({
-  colecao: ["Tiburtius", "Sambaqui", "Etnologia", "Outros"],
-  materia: ["Mineral", "Vegetal", "Animal"],
-  subtipo: ["Cerâmica", "Rocha Lascada", "Rocha Polida", "Cestaria", "Adorno", "Osso", "Fóssil"],
+// --- 2. OPÇÕES DE FILTRO DINÂMICAS ---
+// Computed que extrai opções únicas dos dados carregados
+const opcoesFiltro = computed(() => {
+  if (itensAcervoStore.itensAcervo.length === 0) {
+    // Opções padrão quando não há dados carregados
+    return {
+      colecao: ["Tiburtius", "Sambaqui", "Etnologia", "Outros"],
+      materia: ["Mineral", "Vegetal", "Animal"],
+      subtipo: ["Cerâmica", "Rocha Lascada", "Rocha Polida", "Cestaria", "Adorno", "Osso", "Fóssil"],
+      localizacao: [],
+      estado: ["BOM", "REGULAR", "FRAGMENTADO"]
+    };
+  }
+
+  // === EXTRAI OPÇÕES ÚNICAS DOS DADOS REAIS ===
+  const colecoes = [...new Set(itensAcervoStore.itensAcervo
+    .map(item => item.colecao?.nome_colecao || item.colecao?.nome || item.colecao)
+    .filter(Boolean))];
+  
+  const materias = [...new Set(itensAcervoStore.itensAcervo
+    .map(item => item.materia_prima?.nome || item.materia_prima)
+    .filter(Boolean))];
+    
+  const subtipos = [...new Set(itensAcervoStore.itensAcervo
+    .map(item => item.subtipo?.termo || item.subtipo?.nome || item.subtipo)
+    .filter(Boolean))];
+    
+  const localizacoes = [...new Set(itensAcervoStore.itensAcervo
+    .map(item => item.localizacao_atual?.nome || item.localizacao_atual)
+    .filter(Boolean))];
+    
+  const estados = [...new Set(itensAcervoStore.itensAcervo
+    .map(item => item.estado_conservacao || item.estado)
+    .filter(Boolean))];
+
+  return {
+    colecao: colecoes.sort(),
+    materia: materias.sort(),
+    subtipo: subtipos.sort(),
+    localizacao: localizacoes.sort(),
+    estado: estados.sort()
+  };
 });
 
-const filtrosAtivos = ref({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] });
+// === USO DOS FILTROS DA STORE ===
+// Em vez de usar filtrosAtivos local, usamos da store
+// const filtrosAtivos = ref({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] });
 
 // --- 3. CONTROLE DE PAGINAÇÃO ---
 const paginaAtual = ref(1);
@@ -35,47 +74,70 @@ const itensPorPagina = ref(6);
 
 const syncFiltersFromUrl = () => {
   const query = route.query;
-  filtrosAtivos.value = { colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] };
+  const novosFiltros = { colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] };
   Object.keys(query).forEach(key => {
-    if (key !== 'q' && filtrosAtivos.value.hasOwnProperty(key)) {
+    if (key !== 'q' && novosFiltros.hasOwnProperty(key)) {
       const valor = Array.isArray(query[key]) ? query[key] : [query[key]];
-      filtrosAtivos.value[key] = valor;
+      novosFiltros[key] = valor;
     }
   });
+  itensAcervoStore.atualizarFiltros(novosFiltros);
 };
 
 onMounted(syncFiltersFromUrl);
 watch(() => route.query, syncFiltersFromUrl);
 
 // Resetar página ao mudar filtros
-watch([filtrosAtivos, itensPorPagina], () => {
+watch([() => itensAcervoStore.filtrosAtivos, itensPorPagina], () => {
   paginaAtual.value = 1;
 });
 
+// === SISTEMA DE FILTROS - INTEGRAÇÃO FRONT-END ===
+// ✅ ESTE ARQUIVO MOSTRA COMO OS FILTROS FUNCIONAM NO FRONTEND
+
+// === ITENS PROCESSADOS COM FILTRO DA STORE + BUSCA ===
+// ✅ AQUI OS FILTROS SÃO APLICADOS AOS DADOS
+// 1. Primeiro aplica os filtros da store (checkboxes do sidebar)
+// 2. Depois aplica o filtro de busca por texto
 const itensProcessados = computed(() => {
-  return itensAcervoStore.itensAcervo.filter(item => {
+  // Primeiro aplica os filtros da store, depois a busca por texto
+  return itensAcervoStore.itensAcervoFiltrados.filter(item => {
     const termoBusca = (route.query.q || "").toLowerCase();
-    const superStringItem = [
-      item.titulo, item.colecao, item.materia, item.subtipo, item.id.toString()
-    ].join(' ').toLowerCase();
-    const matchTexto = termoBusca === "" || superStringItem.includes(termoBusca);
+    if (termoBusca === "") return true;
     
-    const matchFiltros = Object.keys(filtrosAtivos.value).every(chave => {
-      const selecionados = filtrosAtivos.value[chave];
-      if (!selecionados || selecionados.length === 0) return true;
-      const valorItem = item[chave] || item['materia'] || item['subtipo']; 
-      return selecionados.includes(valorItem);
-    });
-    return matchTexto && matchFiltros;
+    // ✅ CAMPOS PESQUISÁVEIS POR TEXTO
+    const superStringItem = [
+      item.titulo, 
+      item.nome,
+      item.colecao?.nome_colecao || item.colecao?.nome || item.colecao, 
+      item.materia_prima?.nome || item.materia_prima || item.materia, 
+      item.subtipo?.termo || item.subtipo?.nome || item.subtipo, 
+      item.id.toString()
+    ].join(' ').toLowerCase();
+    
+    return superStringItem.includes(termoBusca);
   });
+});
+
+// === ITENS PAGINADOS ===
+const itensPaginados = computed(() => {
+  const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
+  const fim = inicio + itensPorPagina.value;
+  return itensProcessados.value.slice(inicio, fim);
 });
 
 const totalPaginas = computed(() => Math.ceil(itensProcessados.value.length / itensPorPagina.value));
 
 const mudarPagina = (p) => { paginaAtual.value = p; window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
 const limparTudo = () => {
-  filtrosAtivos.value = { colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] };
+  itensAcervoStore.limparFiltros();
   router.replace({ query: { q: route.query.q } }); 
+};
+
+// === FUNÇÃO PARA ATUALIZAR FILTROS ===
+const atualizarFiltros = (novosFiltros) => {
+  itensAcervoStore.atualizarFiltros(novosFiltros);
 };
 </script>
 
@@ -86,7 +148,11 @@ const limparTudo = () => {
 
     <div class="max-w-[1600px] mx-auto px-6 flex flex-col lg:flex-row pt-8">
       
-      <SideFilter :options="opcoesFiltro" @update:selection="val => filtrosAtivos = val" />
+      <SideFilter 
+        :options="opcoesFiltro" 
+        :filtrosAtivos="itensAcervoStore.filtrosAtivos"
+        @update:selection="atualizarFiltros" 
+      />
 
       <main class="flex-1 pl-0 lg:pl-10 mt-6 lg:mt-0">
         
@@ -113,14 +179,24 @@ const limparTudo = () => {
 
         </div>
 
-        <!-- Grid de Cards -->
-        <div  v-if="itensAcervoStore.itensAcervo.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-          <AcervoCard v-for="item in itensAcervoStore.itensAcervo" :key="item.id" :item="item" />
+        <!-- ✅ GRID DE CARDS - DADOS FILTRADOS EM TEMPO REAL -->
+        <!-- Os dados aqui já passaram por todos os filtros:
+             1. Filtros de checkbox (store)
+             2. Filtro de busca por texto
+             3. Paginação -->
+        <div  v-if="itensPaginados.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          <AcervoCard v-for="item in itensPaginados" :key="item.id" :item="item" />
         </div>
         
         <!-- Empty State -->
-        <div v-else class="text-center py-20 flex flex-col items-center">
+        <div v-else-if="itensAcervoStore.itensAcervo.length === 0" class="text-center py-20 flex flex-col items-center">
           <p class="text-gray-500 text-lg mb-2">Nenhum item encontrado.</p>
+          <button type="button" @click="limparTudo" class="text-black font-bold underline">Limpar filtros</button>
+        </div>
+        
+        <!-- Estado quando não há itens após filtros -->
+        <div v-else class="text-center py-20 flex flex-col items-center">
+          <p class="text-gray-500 text-lg mb-2">Nenhum item corresponde aos filtros selecionados.</p>
           <button type="button" @click="limparTudo" class="text-black font-bold underline">Limpar filtros</button>
         </div>
 
