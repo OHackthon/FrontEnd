@@ -17,9 +17,14 @@ export const useLocalizacoesStore = defineStore('localizacoes', () => {
 
   const fetchLocalizacoes = async () => {
     loadingStore.isLoading = true
-    const data = await localizacaoApi.fetchLocalizacoes()
-    localizacoes.value = Array.isArray(data.results) ? [...data.results] : [...data]
-    loadingStore.isLoading = false
+    try {
+      const data = await localizacaoApi.fetchLocalizacoes()
+      localizacoes.value = Array.isArray(data.results) ? [...data.results] : [...data]
+    } catch (error) {
+      console.error('Erro ao buscar localizações:', error)
+    } finally {
+      loadingStore.isLoading = false
+    }
   }
 
   const createLocalizacao = async (localizacao) => {

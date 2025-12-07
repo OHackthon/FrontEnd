@@ -10,7 +10,10 @@ const props = defineProps({
 })
 
 // Simulação de rota dinâmica
-const colecaoPath = computed(() => `/colecao/${props.colecao.id}`)
+const colecaoPath = computed(() => ({
+  name: 'acervototal',
+  query: { colecao: props.colecao.nome_colecao }
+}))
 </script>
 
 <template>
@@ -20,7 +23,7 @@ const colecaoPath = computed(() => `/colecao/${props.colecao.id}`)
         {{ colecao.nome_colecao }}
       </h3>
       <p class="text-sm text-gray-600 font-light line-clamp-2">
-        {{ colecao.descricao }}
+        {{ colecao.descricao_origem || 'Sem descrição disponível.' }}
       </p>
       <div class="mt-4 text-xs font-semibold uppercase tracking-wider text-gray-500 group-hover:text-gray-900 transition duration-150 ease-in-out">
         Ver Coleção &rarr;

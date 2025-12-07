@@ -1,8 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import FooterSection from '@/components/FooterSection.vue';
 import HeaderNav from '@/components/HeaderNav.vue';
+import { useItensAcervoStore } from '@/stores/itensAcervo';
 
+const router = useRouter();
+const itensAcervoStore = useItensAcervoStore();
 const mapContainer = ref(null);
 const statusMessage = ref('Status: Selecione uma região ou realize uma busca.');
 const selectedRegion = ref('Joinville/SC');
@@ -12,6 +16,21 @@ let mapInstance = null;
 let markerLayer = null;
 let highlightLayer = null;
 const activeSambaqui = ref(null);
+
+const relatedItems = computed(() => {
+    if (!activeSambaqui.value) return [];
+    
+    return itensAcervoStore.itensAcervo.filter(item => {
+        if (!item.localizacao_atual) return false;
+        
+        // Tenta encontrar correspondência entre o nome do sambaqui no mapa e a localização no acervo
+        const localName = (item.localizacao_atual.nome_local || item.localizacao_atual.nome || '').toLowerCase();
+        const mapName = activeSambaqui.value.nome.toLowerCase();
+        
+        // Verifica se um contém o outro para maior flexibilidade
+        return localName.includes(mapName) || mapName.includes(localName);
+    });
+});
 
 const SAMBAQUIS = [
     { id: 1, nome: "Sambaqui Rio Comprido", lat: -26.3110, lon: -48.8650, cidade: "Joinville/SC" },
@@ -328,6 +347,11 @@ watch(selectedRegion, (newRegion) => {
 });
 
 onMounted(async () => {
+    // Carrega os itens do acervo para cruzar com o mapa
+    if (itensAcervoStore.itensAcervo.length === 0) {
+        itensAcervoStore.fetchItens();
+    }
+
     statusMessage.value = "Status: Carregando biblioteca de mapas...";
     try {
         await loadLeafletScript();
@@ -454,6 +478,32 @@ onUnmounted(() => {
                                     class="text-sm text-blue-600 hover:underline">
                                     Centralizar no Mapa
                                 </button>
+                            </div>
+
+                            <!-- Galeria de Imagens Relacionadas -->
+                            <div v-if="relatedItems.length > 0" class="mt-4 border-t pt-3">
+                                <p class="text-sm font-bold text-gray-800 mb-2">Itens neste local ({{ relatedItems.length }}):</p>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div v-for="item in relatedItems.slice(0, 6)" :key="item.id" 
+                                         class="relative group cursor-pointer" 
+                                         @click="router.push({ name: 'detalhe-item', params: { id: item.id } })">
+                                        <img 
+                                            :src="item.imagem?.url || 'https://placehold.co/100x100?text=Sem+Img'" 
+                                            :alt="item.titulo" 
+                                            class="w-full h-16 object-cover rounded border border-gray-200 hover:border-teal-500 transition-colors"
+                                        />
+                                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded"></div>
+                                    </div>
+                                </div>
+                                <div v-if="relatedItems.length > 6" class="text-center mt-2">
+                                    <button @click="router.push({ name: 'acervototal', query: { localizacao: activeSambaqui.nome } })" 
+                                            class="text-xs text-teal-600 hover:underline font-medium">
+                                        Ver todos os {{ relatedItems.length }} itens
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-else class="mt-4 border-t pt-3 text-sm text-gray-500 italic">
+                                Nenhum item catalogado encontrado para este local.
                             </div>
                         </div>
                         <div v-else class="text-gray-500 text-sm italic py-6 text-center">

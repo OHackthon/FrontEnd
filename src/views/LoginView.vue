@@ -11,11 +11,11 @@ const router = useRouter();
 const loadingStore = useLoading();
 const authStore = useAuth();
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 
 const handleLogin = async () => {
-  await authStore.login(email.value, password.value);
+  await authStore.login(username.value, password.value);
   if (!authStore.error) {
     router.push("/");
   }
@@ -58,15 +58,13 @@ const handleLogin = async () => {
           <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
             
             <div class="space-y-1">
-              <label for="email" class="text-sm font-medium text-gray-700">E-mail</label>
+              <label for="username" class="text-sm font-medium text-gray-700">Usuário</label>
               <input
-                id="email"
-                type="email"
-                placeholder="ex: nome@gmail.com"
-                v-model="email"
-                @input="emailError = ''" 
+                id="username"
+                type="text"
+                placeholder="Digite seu usuário"
+                v-model="username"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-all placeholder-gray-400 bg-gray-50 focus:bg-white"
-                :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': emailError }"
               />
             </div>
 

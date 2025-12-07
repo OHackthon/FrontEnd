@@ -4,13 +4,20 @@ import { useAuth } from '@/stores/auth.js'
 
 const authStore = useAuth()
 const isMenuOpen = ref(false)
-const navItems = reactive([
-  { name: 'Início', path: '/' },
-  { name: 'Visita virtual', path: '/visita-virtual' },
-  { name: 'Sobre o Museu', path: '/about' },
-  { name: 'Dashboard', path: '/dashboard' },
 
-])
+const navItems = computed(() => {
+  const items = [
+    { name: 'Início', path: '/' },
+    { name: 'Visita virtual', path: '/visita-virtual' },
+    { name: 'Sobre o Museu', path: '/about' },
+  ]
+
+  if (authStore.isLoggedIn) {
+    items.push({ name: 'Dashboard', path: '/dashboard' })
+  }
+
+  return items
+})
 
 
 onMounted(async () => {

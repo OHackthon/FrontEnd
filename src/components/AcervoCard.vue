@@ -11,7 +11,15 @@ const props = defineProps({
 
 const router = useRouter();
 
+const imageUrl = computed(() => {
+  if (props.item.imagem && props.item.imagem.url) {
+    return props.item.imagem.url;
+  }
+  return 'https://placehold.co/400x300?text=Sem+Imagem';
+});
+
 const irParaDetalhe = () => {
+
   if (props.item.id) {
     router.push({ name: "detalhe-item", params: { id: props.item.id } });
   } else {
@@ -30,7 +38,7 @@ const irParaDetalhe = () => {
       style="aspect-ratio: 4/3"
     >
       <img
-        :src="item.imagem.url"
+        :src="imageUrl"
         :alt="item.nome"
         class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 absolute inset-0"
       />

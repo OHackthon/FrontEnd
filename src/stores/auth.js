@@ -32,12 +32,12 @@ export const useAuth = defineStore('auth', () => {
     user.value = res.data
   }
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     error.value = null
     loadingStore.isLoading = true
     try {
       const response = await API.post('token/', {
-        email,
+        username,
         password,
       })
 
@@ -69,20 +69,30 @@ export const useAuth = defineStore('auth', () => {
     error.value = null
     loadingStore.isLoading = true
     try {
-      await API.post('users/', userData)
-      await login(userData.email, userData.password)
+      const nameParts = userData.name.split(' ')
+      const firstName = nameParts[0]
+      const lastName = nameParts.slice(1).join(' ')
+
+      const payload = {
+        username: userData.username,
+        email: userData.email,
+        password: userData.password,
+        first_name: firstName,
+        last_name: lastName,
+      }
+
+      await API.post('users/', payload)
+      await login(userData.username, userData.password)
     } catch (err) {
       if (err.response) {
         if (err.response.data.email) {
-            error.value = 'Usuário já existe. Tente outro email.'
-        }
-        else if (err.response.status === 400) {
+          error.value = 'Usuário já existe. Tente outro email.'
+        } else if (err.response.status === 400) {
           error.value = 'Dados inválidos. Verifique os campos e tente novamente.'
         } else if (err.response.status === 401) {
-            error.value = 'Não autorizado. Verifique suas credenciais.'
-        }
-         else if (err.response.status === 409) {
-            error.value = 'Usuário já existe. Tente outro email.'
+          error.value = 'Não autorizado. Verifique suas credenciais.'
+        } else if (err.response.status === 409) {
+          error.value = 'Usuário já existe. Tente outro email.'
         } else {
           error.value = 'Erro ao conectar com o servidor.'
         }

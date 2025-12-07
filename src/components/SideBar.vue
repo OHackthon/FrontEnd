@@ -9,9 +9,11 @@ const emit = defineEmits(['logout']);
 // Itens do Menu com rotas definidas
 const menuItems = [
   { label: 'Dashboard', path: '/dashboard', icon: 'layout' },
-  { label: 'Gestão', path: '/colecionador', icon: 'collection' }, // Rota atualizada conforme solicitado
-  { label: 'Categorias', path: '/categorias', icon: 'category' },
-  { label: 'Reservas', path: '/reservas', icon: 'arrows' },
+  { label: 'Gestão', path: '/dashboard/gestao', icon: 'collection' },
+  { label: 'Categorias', path: '/dashboard/categorias', icon: 'category' },
+  { label: 'Artefatos', path: '/dashboard/artefatos', icon: 'box' },
+  { label: 'Reservas', path: '/dashboard/reservas', icon: 'arrows' },
+  { label: 'Usuários', path: '/dashboard/usuarios', icon: 'users' },
 ];
 
 // Função para verificar se a rota está ativa
@@ -20,7 +22,7 @@ const isActive = (path) => {
   if (path === '/dashboard') {
     return route.path === path;
   }
-  // Garante que /colecionador fique ativo mesmo se houver sub-rotas (ex: /colecionador/novo)
+  // Garante que a rota fique ativa mesmo se houver sub-rotas (ex: /gestao/novo)
   return route.path === path || route.path.startsWith(path + '/');
 };
 

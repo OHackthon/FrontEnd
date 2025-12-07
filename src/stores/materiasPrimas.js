@@ -31,14 +31,7 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
       const choicesData = await materiasPrimasApi.fetchMateriasPrimasChoices()
       materiasPrimas.value = choicesData
     } catch (error) {
-      console.warn('Erro ao buscar matérias-primas, usando dados padrão:', error)
-      // Fallback para dados padrão
-      materiasPrimas.value = [
-        { value: 'ANIMAL', label: 'Animal' },
-        { value: 'VEGETAL', label: 'Vegetal' },
-        { value: 'MINERAL', label: 'Mineral' },
-        { value: 'OUTRO', label: 'Outro' },
-      ]
+      console.error('Erro ao buscar matérias-primas:', error)
     } finally {
       loadingStore.isLoading = false
     }

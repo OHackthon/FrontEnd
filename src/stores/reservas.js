@@ -4,10 +4,12 @@ import ReservasApi from '@/services/reservasApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 import { useAuth } from '@/stores/auth.js'
+import { useNotificationStore } from '@/stores/notification.js'
 
 const authStore = useAuth()
 const loadingStore = useLoading()
 const modalStore = useModalStore()
+const notificationStore = useNotificationStore()
 const reservasApi = new ReservasApi()
 
 export const useReservasStore = defineStore('reservas', () => {
@@ -30,16 +32,30 @@ export const useReservasStore = defineStore('reservas', () => {
 
   const fetchReservas = async () => {
     loadingStore.isLoading = true
-    const data = await reservasApi.fetchReservas()
-    reservas.value = Array.isArray(data.results) ? [...data.results] : [...data]
-    loadingStore.isLoading = false
+    try {
+      const data = await reservasApi.fetchReservas()
+      reservas.value = Array.isArray(data.results) ? [...data.results] : [...data]
+    } catch (error) {
+      console.error('Erro ao buscar reservas:', error)
+    } finally {
+      loadingStore.isLoading = false
+    }
   }
 
   const createReserva = async (reserva) => {
     try {
       loadingStore.isLoading = true
+
+      // Ensure responsavel is set to current user ID
+      if (!reserva.responsavel && authStore.user) {
+        reserva.responsavel = authStore.user.id
+      } else if (typeof reserva.responsavel === 'object' && reserva.responsavel !== null) {
+        reserva.responsavel = reserva.responsavel.id
+      }
+
       const created = await reservasApi.createReserva(reserva)
       reservas.value.push(created)
+      notificationStore.showSuccess('Reserva criada com sucesso!')
 
       newReserva.value = {
         id: null,
@@ -52,9 +68,12 @@ export const useReservasStore = defineStore('reservas', () => {
       }
 
       loadingStore.isLoading = false
+      return true
     } catch (err) {
       console.error('Error creating reserva', err)
+      notificationStore.showError('Erro ao criar reserva. Verifique os dados.')
       loadingStore.isLoading = false
+      return false
     }
   }
 

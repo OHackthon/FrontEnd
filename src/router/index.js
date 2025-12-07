@@ -29,21 +29,6 @@ const router = createRouter({
       component: () => import('../views/AcervoView.vue'),
     },
     {
-      path: '/colecionador',
-      name: 'colecionador',
-      component: () => import('../views/CollectorPage.vue'),
-    },
-    {
-      path: '/artefato',
-      name: 'artefato',
-      component: () => import('../views/ArtefatoView.vue'),
-    },
-    {
-      path: '/reservas',
-      name: 'reservas',
-      component: () => import('../views/MovementManager.vue'),
-    },
-    {
       path: '/sidefilter',
       name: 'sidefilter',
       component: () => import('../components/SideFilter.vue'),
@@ -68,13 +53,40 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      name: 'dashboard',
-      component: () => import('../views/DashboardView.vue'),
-    },
-    {
-      path: '/categorias',
-      name: 'categorias',
-      component: () => import('../views/CategoriaManagerView.vue'),
+      component: () => import('../layouts/DashboardLayout.vue'),
+      meta: { requiresAuth: true },
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          component: () => import('../views/DashboardHome.vue'),
+        },
+        {
+          path: 'gestao',
+          name: 'gestao',
+          component: () => import('../views/CollectorPage.vue'),
+        },
+        {
+          path: 'categorias',
+          name: 'categorias',
+          component: () => import('../views/CategoriaManagerView.vue'),
+        },
+        {
+          path: 'artefatos',
+          name: 'artefatos',
+          component: () => import('../views/ArtefatoView.vue'),
+        },
+        {
+          path: 'reservas',
+          name: 'reservas',
+          component: () => import('../views/MovementManager.vue'),
+        },
+        {
+          path: 'usuarios',
+          name: 'usuarios',
+          component: () => import('../views/UserManagerView.vue'),
+        },
+      ],
     },
   ],
 
@@ -82,6 +94,16 @@ const router = createRouter({
     if (savedPosition) return savedPosition
     return { top: 0 }
   },
+})
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('access_token')
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
 })
 
 export default router

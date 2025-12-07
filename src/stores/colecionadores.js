@@ -18,9 +18,14 @@ export const useColecionadoresStore = defineStore('colecionadores', () => {
 
   const fetchColecionadores = async () => {
     loadingStore.isLoading = true
-    const data = await colecionadoresApi.fetchColecionadores()
-    colecionadores.value = Array.isArray(data.results) ? [...data.results] : [...data]
-    loadingStore.isLoading = false
+    try {
+      const data = await colecionadoresApi.fetchColecionadores()
+      colecionadores.value = Array.isArray(data.results) ? [...data.results] : [...data]
+    } catch (error) {
+      console.error('Erro ao buscar colecionadores:', error)
+    } finally {
+      loadingStore.isLoading = false
+    }
   }
 
   const createColecionador = async (colecionador) => {

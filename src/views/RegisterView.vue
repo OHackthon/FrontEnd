@@ -14,6 +14,7 @@ const loadingStore = useLoading();
 const authStore = useAuth();
 
 const formData = reactive({
+  username: "",
   name: "",
   email: "",
   password: "",
@@ -71,6 +72,17 @@ const handleRegister = async () => {
 
           <form @submit.prevent="handleRegister" class="flex flex-col gap-4">
             
+            <div class="space-y-1">
+              <label class="text-sm font-medium text-gray-700">Usuário</label>
+              <input
+                type="text"
+                placeholder="ex: joaosilva"
+                v-model="formData.username"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-all placeholder-gray-400 bg-gray-50 focus:bg-white"
+              />
+            </div>
+
             <div class="space-y-1">
               <label class="text-sm font-medium text-gray-700">Nome Completo</label>
               <input

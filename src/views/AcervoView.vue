@@ -46,8 +46,8 @@ const opcoesFiltro = computed(() => {
   const materias = [
     ...new Set(
       itensAcervoStore.itensAcervo
-        .map((item) => item.materia_prima?.nome || item.materia_prima)
-        .filter(Boolean)
+        .map((item) => item.materia_prima?.materia || item.materia_prima?.nome || item.materia_prima)
+        .filter((val) => typeof val === 'string')
     ),
   ];
 
@@ -55,7 +55,7 @@ const opcoesFiltro = computed(() => {
     ...new Set(
       itensAcervoStore.itensAcervo
         .map((item) => item.subtipo?.termo || item.subtipo?.nome || item.subtipo)
-        .filter(Boolean)
+        .filter((val) => typeof val === 'string')
     ),
   ];
 
@@ -71,7 +71,7 @@ const opcoesFiltro = computed(() => {
             item.localizacao?.nome ||
             item.localizacao
         )
-        .filter(Boolean)
+        .filter((val) => typeof val === 'string')
     ),
   ];
 

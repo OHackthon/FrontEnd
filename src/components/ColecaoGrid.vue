@@ -30,7 +30,6 @@ onMounted( async () => {
         v-for="colecao in colecoesStore.colecoes" 
         :key="colecao.id" 
         :colecao="colecao"
-        @click="router.push(`/acervototal`)"
       />
     </div>
   </div>

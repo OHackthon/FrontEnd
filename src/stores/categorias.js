@@ -23,14 +23,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
       const data = await categoriaAcervoApi.fetchCategorias()
       categorias.value = Array.isArray(data.results) ? [...data.results] : [...data]
     } catch (error) {
-      console.warn('Erro ao buscar categorias da API, usando dados padrão:', error)
-      // Fallback para dados padrão em caso de erro
-      categorias.value = [
-        { id: 1, nome: 'Arqueológico' },
-        { id: 2, nome: 'Etnográfico' },
-        { id: 3, nome: 'Histórico' },
-        { id: 4, nome: 'Artístico' },
-      ]
+      console.error('Erro ao buscar categorias da API:', error)
     } finally {
       loadingStore.isLoading = false
     }
