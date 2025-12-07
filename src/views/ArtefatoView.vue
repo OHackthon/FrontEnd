@@ -101,6 +101,30 @@ const deleteItem = async (id) => {
   }
 };
 
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const result = await itensStore.uploadExcel(file);
+    alert(result.message || 'Importação concluída!');
+    if (result.errors && result.errors.length > 0) {
+      console.warn('Erros na importação:', result.errors);
+      alert('Alguns itens não foram importados. Verifique o console para detalhes.');
+    }
+  } catch (error) {
+    alert('Erro ao importar arquivo: ' + (error.response?.data?.error || error.message));
+  } finally {
+    event.target.value = ''; // Reset input
+  }
+};
+
 function formatarData(dataIso) {
   if (!dataIso) return "";
   const data = new Date(dataIso);
@@ -122,6 +146,22 @@ function formatarData(dataIso) {
           <p class="text-gray-500 mt-1">Administre os itens do acervo</p>
         </div>
         <div class="flex gap-3">
+          <input
+            type="file"
+            ref="fileInput"
+            class="hidden"
+            accept=".xlsx, .xls"
+            @change="handleFileUpload"
+          />
+          <button
+            @click="triggerFileInput"
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Importar Excel
+          </button>
           <button
             @click="openModal('create')"
             class="bg-[#0F3D3E] hover:bg-[#0A2A2B] text-white font-semibold py-2 px-4 rounded shadow-sm text-sm transition flex items-center gap-1"

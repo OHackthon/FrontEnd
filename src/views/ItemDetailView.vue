@@ -41,45 +41,19 @@ const activeTab = ref('colecao')
 const scrollContainer = ref(null)
 
 const voltarParaCategoria = () => {
-  if (item.value?.colecao) {
-    router.push({
-      name: 'acervototal',
-      query: { colecao: item.value.colecao?.nome_colecao || item.value.colecao?.nome }
-    })
-  } else {
-    router.push({ name: 'acervototal' })
-  }
+  router.push({ name: 'acervototal' })
 }
 
 const imagemAtiva = computed(() => {
-  if (!item.value?.imagens) return ''
-  return item.value.imagens[imagemAtivaIndex.value]
+  if (!item.value?.imagem) return 'https://placehold.co/800x600?text=Sem+Imagem'
+  if (typeof item.value.imagem === 'object' && item.value.imagem.url) {
+    return item.value.imagem.url
+  }
+  if (typeof item.value.imagem === 'string') {
+    return item.value.imagem
+  }
+  return 'https://placehold.co/800x600?text=Sem+Imagem'
 })
-
-const mudarImagem = (index) => {
-  imagemAtivaIndex.value = index
-  isZoomed.value = false
-}
-
-const proximaImagem = () => {
-  if (!item.value?.imagens) return
-  if (imagemAtivaIndex.value < item.value.imagens.length - 1) {
-    imagemAtivaIndex.value++
-  } else {
-    imagemAtivaIndex.value = 0
-  }
-  isZoomed.value = false
-}
-
-const anteriorImagem = () => {
-  if (!item.value?.imagens) return
-  if (imagemAtivaIndex.value > 0) {
-    imagemAtivaIndex.value--
-  } else {
-    imagemAtivaIndex.value = item.value.imagens.length - 1
-  }
-  isZoomed.value = false
-}
 
 const toggleZoom = () => {
   isZoomed.value = !isZoomed.value
@@ -132,7 +106,7 @@ const gerarFichaPDF = async () => {
   doc.line(margin, y, 190, y);
   y += 15;
 
-  if (item.value.imagens && item.value.imagens.length > 0) {
+  if (imagemAtiva.value && !imagemAtiva.value.includes('placehold.co')) {
     try {
       const getBase64ImageFromURL = (url) => {
         return new Promise((resolve, reject) => {
@@ -154,7 +128,7 @@ const gerarFichaPDF = async () => {
         });
       };
 
-      const imgData = await getBase64ImageFromURL(item.value.imagens[imagemAtivaIndex.value]);
+      const imgData = await getBase64ImageFromURL(imagemAtiva.value);
 
       if (imgData) {
         const imgWidth = 80;
@@ -171,13 +145,13 @@ const gerarFichaPDF = async () => {
 
   doc.setFont("times", "bold");
   doc.setFontSize(14);
-  const titleLines = doc.splitTextToSize(item.value.nome, 170);
+  const titleLines = doc.splitTextToSize(item.value.titulo, 170);
   doc.text(titleLines, margin, y);
 
   y += (titleLines.length * 7) + 5;
   doc.setFontSize(10);
   doc.setTextColor(100);
-  doc.text(`Nº Inventário: ${item.value.acervo.numero_acervo}`, margin, y);
+  doc.text(`Nº Inventário: ${item.value.numero_acervo}`, margin, y);
   doc.setTextColor(0);
   y += 10;
 
@@ -199,10 +173,10 @@ const gerarFichaPDF = async () => {
     }
   };
 
-  addLine("Coleção", item.value.colecao.nome_colecao);
-  addLine("Material", item.value.materia_prima.nome);
+  addLine("Coleção", item.value.colecao?.nome_colecao || item.value.colecao?.nome);
+  addLine("Material", item.value.materia_prima?.materia || item.value.materia_prima?.nome);
   addLine("Dimensões", item.value.dimensoes);
-  addLine("Datação", item.value.datacao);
+  addLine("Datação", item.value.datacao_estimada);
   addLine("Procedência", item.value.procedencia);
   addLine("Estado", item.value.estado_conservacao);
   addLine("Localização", item.value.localizacao_atual.nome_local);
@@ -211,12 +185,12 @@ const gerarFichaPDF = async () => {
   doc.line(margin, y, 190, y);
   y += 10;
 
-  if (item.value.descricao) {
+  if (item.value.descricao_detalhada) {
     doc.setFont("helvetica", "bold");
     doc.text("Descrição / Análise:", margin, y);
     y += 6;
     doc.setFont("helvetica", "normal");
-    const descLines = doc.splitTextToSize(item.value.descricao, 170);
+    const descLines = doc.splitTextToSize(item.value.descricao_detalhada, 170);
     doc.text(descLines, margin, y);
   }
 
@@ -241,12 +215,11 @@ const gerarFichaPDF = async () => {
           class="text-sm text-gray-500 hover:text-black flex items-center gap-2 transition-colors group uppercase tracking-wider font-bold"
         >
           <span class="transform group-hover:-translate-x-1 transition-transform">←</span>
-          Voltar para {{ item.colecao?.nome_colecao || item.colecao?.nome }}
+          Voltar para o Acervo
         </button>
         <div class="text-right">
           <p class="text-[10px] text-gray-400 uppercase tracking-widest">Número de Inventário</p>
-          <p class="font-mono text-sm font-bold bg-gray-100 px-2 py-1 inline-block rounded mt-1">{{ item.acervo.numero_acervo
-            }}</p>
+          <p class="font-mono text-sm font-bold bg-gray-100 px-2 py-1 inline-block rounded mt-1">{{ item.numero_acervo }}</p>
         </div>
       </nav>
 
@@ -268,19 +241,11 @@ const gerarFichaPDF = async () => {
               @click="toggleZoom"
             >
               <img
-                :src="item.imagem.url"
-                :alt="item.nome"
+                :src="imagemAtiva"
+                :alt="item.titulo"
                 class="w-full h-full object-contain transition-transform duration-500 ease-out mix-blend-multiply select-none"
                 :class="isZoomed ? 'scale-[2]' : 'scale-100'"
               />
-              <button @click.stop="anteriorImagem" v-if="item?.imagens?.length > 1"
-                      class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-20 text-black">
-                ←
-              </button>
-              <button @click.stop="proximaImagem" v-if="item?.imagens?.length > 1"
-                      class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-20 text-black">
-                →
-              </button>
               <div class="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow-sm pointer-events-none z-10">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-600" fill="none" viewBox="0 0 24 24"
                      stroke="currentColor">
@@ -288,19 +253,6 @@ const gerarFichaPDF = async () => {
                         stroke-linejoin="round" stroke-width="2" />
                 </svg>
               </div>
-            </div>
-
-            <div v-if="item?.imagens?.length > 1"
-                 class="flex gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center lg:justify-start">
-              <button
-                v-for="(img, idx) in item.imagens"
-                :key="idx"
-                @click="mudarImagem(idx)"
-                class="w-16 h-16 sm:w-20 sm:h-20 border-2 rounded-sm overflow-hidden transition-all shrink-0 relative bg-gray-50"
-                :class="imagemAtivaIndex === idx ? 'border-black opacity-100 ring-1 ring-black' : 'border-transparent opacity-60 hover:opacity-100'"
-              >
-                <img :src="img" class="w-full h-full object-cover" />
-              </button>
             </div>
 
             <p class="text-[10px] text-gray-400 mt-2 text-center lg:text-left">© Museu Sambaqui de Joinville / Foto:
@@ -316,7 +268,7 @@ const gerarFichaPDF = async () => {
                 class="px-2 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-widest rounded-sm">{{ item.colecao.nome_colecao
                 }}</span>
               <span
-                class="text-[10px] font-bold uppercase tracking-widest text-gray-500 border border-gray-200 px-2 py-1 rounded-sm">{{ item.materia_prima.nome
+                class="text-[10px] font-bold uppercase tracking-widest text-gray-500 border border-gray-200 px-2 py-1 rounded-sm">{{ item.materia_prima?.materia || item.materia_prima?.nome
                 }}</span>
             </div>
             <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl text-gray-900 leading-tight mb-4 sm:mb-6">
@@ -358,7 +310,7 @@ const gerarFichaPDF = async () => {
             <dl class="grid grid-cols-1 gap-y-3 sm:gap-y-4 text-sm">
               <div class="grid grid-cols-3">
                 <dt class="text-gray-500 font-medium">Datação</dt>
-                <dd class="col-span-2 text-gray-900">{{ item.datacao }}</dd>
+                <dd class="col-span-2 text-gray-900">{{ item.datacao_estimada }}</dd>
               </div>
               <div class="grid grid-cols-3">
                 <dt class="text-gray-500 font-medium">Procedência</dt>
@@ -373,10 +325,10 @@ const gerarFichaPDF = async () => {
             </div>
           </section>
 
-          <section v-if="item.descricao">
+          <section v-if="item.descricao_detalhada">
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 pb-2">
               Análise</h3>
-            <div class="prose prose-sm prose-gray max-w-none text-justify"><p>{{ item.descricao }}</p></div>
+            <div class="prose prose-sm prose-gray max-w-none text-justify"><p>{{ item.descricao_detalhada }}</p></div>
           </section>
         </div>
       </div>

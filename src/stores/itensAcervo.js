@@ -211,6 +211,20 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
     }
   }
 
+  const uploadExcel = async (file) => {
+    try {
+      loadingStore.isLoading = true
+      const response = await itensAcervoApi.uploadExcel(file)
+      await fetchItens() // Refresh list
+      loadingStore.isLoading = false
+      return response
+    } catch (err) {
+      console.error('Error uploading excel:', err)
+      loadingStore.isLoading = false
+      throw err
+    }
+  }
+
   return {
     itensAcervo,
     itensAcervoFiltrados,
@@ -222,6 +236,7 @@ export const useItensAcervoStore = defineStore('itensAcervo', () => {
     createItemAcervo,
     updateItemAcervo,
     deleteItemAcervo,
+    uploadExcel,
     estadoOptions,
     inteirezaOptions,
     getItemPorId,

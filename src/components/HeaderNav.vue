@@ -8,6 +8,7 @@ const isMenuOpen = ref(false)
 const navItems = computed(() => {
   const items = [
     { name: 'Início', path: '/' },
+    { name: 'Acervo', path: '/acervototal' },
     { name: 'Visita virtual', path: '/visita-virtual' },
     { name: 'Sobre o Museu', path: '/about' },
   ]
