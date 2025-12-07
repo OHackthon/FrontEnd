@@ -1,32 +1,20 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useColecoesStore } from '@/stores/colecoes'
-
 const colecaoStore = useColecoesStore()
-
 onMounted( async() => {
   await colecaoStore.fetchColecoes()
 })
-
-// --- ESTADO DA UI ---
 const searchCollectionQuery = ref('')
-
-// Modais
 const showCollectionModal = ref(false)
-const modalMode = ref('create') // 'create' | 'edit'
-const currentItem = ref({}) // Item sendo editado/vinculado
-
-// --- LÓGICA COMPUTADA (FILTROS) ---
+const modalMode = ref('create') 
+const currentItem = ref({}) 
 const filteredCollections = computed(() => {
   const q = searchCollectionQuery.value.toLowerCase()
   return colecaoStore.colecoes.filter(c =>
     c.nome_colecao?.toLowerCase().includes(q)
   )
 })
-
-// --- AÇÕES ---
-
-// 1. Coleções
 const openCollectionModal = (mode, item = null) => {
   modalMode.value = mode
   if (mode === 'create') {
@@ -42,8 +30,6 @@ const openCollectionModal = (mode, item = null) => {
   }
   showCollectionModal.value = true
 }
-
-
 const saveCollection = async () => {
   if (modalMode.value === 'create') {
     await colecaoStore.createColecao(currentItem.value)
@@ -52,19 +38,14 @@ const saveCollection = async () => {
   }
   showCollectionModal.value = false
 }
-
-
 const deleteCollection = (id) => {
   if (confirm('Tem certeza que deseja excluir esta coleção? ATENÇÃO: Todos os itens vinculados a ela também serão excluídos permanentemente.')) {
     colecaoStore.deleteColecao(id)
   }
 }
-
 function formatarData(dataIso) {
   if (!dataIso) return ''
-
   const data = new Date(dataIso)
-
   return data.toLocaleString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -75,16 +56,10 @@ function formatarData(dataIso) {
     hour12: false
   })
 }
-
 </script>
-
 <template>
   <div class="font-sans text-[#1C1C1C]">
-
-    <!-- ================= MAIN CONTENT ================= -->
     <main class="w-full">
-
-      <!-- PAGE HEADER -->
       <header class="flex flex-col md:flex-row md:items-start md:justify-between mb-10 gap-4">
         <div>
           <h1 class="text-3xl font-bold text-black tracking-tight">Gestão de Coleções</h1>
@@ -98,16 +73,11 @@ function formatarData(dataIso) {
             </svg>
             Nova Coleção
           </button>
-
         </div>
       </header>
-
-      <!-- SECTION 1: LISTA DE COLEÇÕES -->
       <section class="mb-12">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-bold text-[#1C1C1C]">Lista de Coleções</h2>
-
-          <!-- Search Bar -->
           <div class="relative w-72">
             <input
               v-model="searchCollectionQuery"
@@ -123,8 +93,6 @@ function formatarData(dataIso) {
             </div>
           </div>
         </div>
-
-        <!-- Tabela Coleções -->
         <div class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
           <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-[#F9FAFB]">
@@ -148,7 +116,6 @@ function formatarData(dataIso) {
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatarData(col.data_registro_sistema) }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div class="flex justify-end gap-3">
-                  <!-- Editar -->
                   <button @click="openCollectionModal('edit', col)"
                           class="text-[#0F766E] hover:text-[#0F3D3E] transition-colors p-2 rounded-lg hover:bg-[#0F766E]/10" title="Editar">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,8 +123,6 @@ function formatarData(dataIso) {
                             d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                   </button>
-
-                  <!-- Excluir -->
                   <button @click="deleteCollection(col.id)" class="text-red-600 hover:text-red-800 transition-colors p-2 rounded-lg hover:bg-red-50"
                           title="Excluir">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,14 +137,7 @@ function formatarData(dataIso) {
           </table>
         </div>
       </section>
-
-
-
     </main>
-
-    <!-- ================= MODAIS ================= -->
-
-    <!-- Modal Coleção -->
     <div v-if="showCollectionModal"
          class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in">
@@ -220,16 +178,9 @@ function formatarData(dataIso) {
         </div>
       </div>
     </div>
-
-
-
-
-
   </div>
 </template>
-
 <style scoped>
-/* Animação suave para modais */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -240,7 +191,6 @@ function formatarData(dataIso) {
     transform: scale(1);
   }
 }
-
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out forwards;
 }

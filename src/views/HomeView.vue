@@ -3,21 +3,14 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import HeaderNav from '../components/HeaderNav.vue'
 import HeroBanner from '../components/HeroBanner.vue'
 import SambaquiMap from '@/components/SambaquiMap.vue'
-
 import CategoryGrid from '../components/ColecaoGrid.vue'
-
 </script>
-
 <template>
   <div class="min-h-full flex flex-col bg-white text-gray-900">
-
     <HeaderNav />
-
     <main class="grow">
       <HeroBanner />
-
       <CategoryGrid />
-
       <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
         <h2 class="text-2xl sm:text-3xl font-serif font-light text-gray-800 text-center mb-4">
           O que são os Sambaquis?
@@ -35,10 +28,7 @@ import CategoryGrid from '../components/ColecaoGrid.vue'
           </router-link>
         </div>
       </section>
-
     </main>
-
     <SambaquiMap class="mb-50" />
-
   </div>
 </template>

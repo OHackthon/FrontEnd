@@ -1,5 +1,4 @@
 import API from '@/services/axiosInterceptor.js'
-
 export default class LocalizacaoApi {
     async fetchLocalizacoes() {
         const response =  await API.get('localizacoes/')

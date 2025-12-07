@@ -4,16 +4,12 @@ import { useRouter } from "vue-router";
 import { useLoading } from "@/stores/loading";
 import { OctagonX } from "lucide-vue-next";
 import { useAuth } from "@/stores/auth";
-
 import logoMuseu from "@/assets/LOGO1.png";
-
 const router = useRouter();
 const loadingStore = useLoading();
 const authStore = useAuth();
-
 const username = ref("");
 const password = ref("");
-
 const handleLogin = async () => {
   await authStore.login(username.value, password.value);
   if (!authStore.error) {
@@ -21,12 +17,8 @@ const handleLogin = async () => {
   }
 };
 </script>
-
 <template>
- 
-
   <div class="h-screen flex bg-white overflow-hidden">
-    
     <div class="hidden lg:flex lg:w-1/2 bg-gray-100 relative overflow-hidden">
       <img 
         src="@/assets/images/maispedra.jpg"
@@ -37,10 +29,8 @@ const handleLogin = async () => {
       <div class="relative z-10 p-12 flex flex-col justify-end h-full text-white">
       </div>
     </div>
-
     <main class="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-16 bg-white">
       <div class="w-full max-w-md flex flex-col gap-6">
-        
         <div class="w-full flex justify-center mb-4">
           <img 
             :src="logoMuseu" 
@@ -48,15 +38,12 @@ const handleLogin = async () => {
             class="h-16 w-auto object-contain" 
           />
         </div>
-
         <div class="login-container flex flex-col gap-6">
           <div>
             <h2 class="text-3xl font-serif font-medium text-gray-900 text-center">Bem-vindo de volta</h2>
             <p class="text-gray-500 mt-2 text-center">Insira suas credenciais para acessar o acervo.</p>
           </div>
-
           <form @submit.prevent="handleLogin" class="flex flex-col gap-5">
-            
             <div class="space-y-1">
               <label for="username" class="text-sm font-medium text-gray-700">Usuário</label>
               <input
@@ -67,7 +54,6 @@ const handleLogin = async () => {
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-all placeholder-gray-400 bg-gray-50 focus:bg-white"
               />
             </div>
-
             <div class="space-y-1">
               <div class="flex justify-between items-center">
                 <label for="password" class="text-sm font-medium text-gray-700">Senha</label>
@@ -80,17 +66,14 @@ const handleLogin = async () => {
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-all placeholder-gray-400 bg-gray-50 focus:bg-white"
               />
             </div>
-
             <div v-if="authStore.error" class="flex items-center gap-3 p-3 rounded-lg bg-red-50 border border-red-100 animate-pulse">
               <OctagonX :size="20" class="text-red-700 shrink-0" />
               <p class="text-red-700 text-sm font-medium">{{ authStore.error }}</p>
             </div>
-
             <button type="submit" class="w-full py-3.5 mt-2 rounded-lg bg-gray-900 text-white font-medium text-sm uppercase tracking-wider hover:bg-black transform active:scale-[0.98] transition-all duration-200 shadow-lg shadow-gray-300">
               Acessar Sistema
             </button>
           </form>
-
           <section class="text-center mt-4 pt-6 border-t border-gray-100">
             <div class="flex flex-row gap-2 justify-center text-sm">
               <p class="text-gray-600">Não possui uma conta?</p>

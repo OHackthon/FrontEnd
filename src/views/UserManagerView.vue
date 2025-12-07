@@ -2,20 +2,17 @@
 import { ref, onMounted, computed } from 'vue'
 import { useAuth } from '@/stores/auth'
 import UsersApi from '@/services/usersApi'
-
 const authStore = useAuth()
 const usersApi = new UsersApi()
 const users = ref([])
 const loading = ref(false)
 const error = ref(null)
-
-// Modal State
 const showModal = ref(false)
 const showDeleteModal = ref(false)
 const showInfoModal = ref(false)
 const infoMessage = ref('')
 const userToDelete = ref(null)
-const modalMode = ref('create') // 'create' | 'edit'
+const modalMode = ref('create') 
 const currentUser = ref({
   id: null,
   username: '',
@@ -25,11 +22,9 @@ const currentUser = ref({
   password: '',
   is_staff: false
 })
-
 const isManager = computed(() => {
   return authStore.user?.is_staff || authStore.user?.is_superuser
 })
-
 const fetchUsers = async () => {
   loading.value = true
   try {
@@ -41,7 +36,6 @@ const fetchUsers = async () => {
     loading.value = false
   }
 }
-
 const openModal = (mode, user = null) => {
   modalMode.value = mode
   if (mode === 'create') {
@@ -55,18 +49,17 @@ const openModal = (mode, user = null) => {
       is_staff: false
     }
   } else {
-    currentUser.value = { ...user, password: '' } // Don't fill password on edit
+    currentUser.value = { ...user, password: '' } 
   }
   showModal.value = true
 }
-
 const saveUser = async () => {
   try {
     if (modalMode.value === 'create') {
       await usersApi.createUser(currentUser.value)
     } else {
       const payload = { ...currentUser.value }
-      if (!payload.password) delete payload.password // Don't send empty password
+      if (!payload.password) delete payload.password 
       await usersApi.updateUser(payload.id, payload)
     }
     showModal.value = false
@@ -76,7 +69,6 @@ const saveUser = async () => {
     alert("Erro ao salvar usuário. Verifique os dados.")
   }
 }
-
 const confirmDeleteUser = (user) => {
   if (user.username === 'admin') {
     infoMessage.value = "Não é possível excluir o administrador principal."
@@ -91,10 +83,8 @@ const confirmDeleteUser = (user) => {
   userToDelete.value = user
   showDeleteModal.value = true
 }
-
 const deleteUser = async () => {
   if (!userToDelete.value) return
-  
   try {
     await usersApi.deleteUser(userToDelete.value.id)
     await fetchUsers()
@@ -105,14 +95,12 @@ const deleteUser = async () => {
     alert("Erro ao excluir usuário.")
   }
 }
-
 onMounted(async () => {
   if (isManager.value) {
     await fetchUsers()
   }
 })
 </script>
-
 <template>
   <div class="font-sans text-[#1C1C1C]">
     <main class="w-full">
@@ -135,7 +123,6 @@ onMounted(async () => {
           </button>
         </div>
       </header>
-
       <div v-if="!isManager" class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
         <div class="flex">
           <div class="flex-shrink-0">
@@ -150,7 +137,6 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-
       <section v-else class="mb-12">
         <div class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
             <div v-if="loading" class="p-8 text-center text-gray-500">Carregando usuários...</div>
@@ -197,8 +183,6 @@ onMounted(async () => {
         </div>
       </section>
     </main>
-
-    <!-- INFO MODAL -->
     <div v-if="showInfoModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
         <div class="p-6 text-center">
@@ -219,8 +203,6 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-
-    <!-- DELETE CONFIRMATION MODAL -->
     <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in">
         <div class="p-6 text-center">
@@ -244,8 +226,6 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-
-    <!-- MODAL -->
     <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-fade-in max-h-[90vh] overflow-y-auto">
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -263,12 +243,10 @@ onMounted(async () => {
             <label class="block text-sm font-medium text-gray-700 mb-1">Usuário (Login)</label>
             <input v-model="currentUser.username" type="text" class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none" />
           </div>
-          
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input v-model="currentUser.email" type="email" class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none" />
           </div>
-
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
@@ -279,14 +257,12 @@ onMounted(async () => {
               <input v-model="currentUser.last_name" type="text" class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none" />
             </div>
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
               Senha {{ modalMode === 'edit' ? '(Deixe em branco para não alterar)' : '' }}
             </label>
             <input v-model="currentUser.password" type="password" class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none" />
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Usuário</label>
             <div class="flex gap-4">
@@ -300,7 +276,6 @@ onMounted(async () => {
               </label>
             </div>
           </div>
-
         </div>
         <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
           <button @click="showModal = false" class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 rounded-lg transition">
@@ -312,10 +287,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-
   </div>
 </template>
-
 <style scoped>
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }

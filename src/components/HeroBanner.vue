@@ -1,11 +1,9 @@
 <script setup>
 import { ref } from "vue";
-
 const title = ref("Descubra a Cultura dos Sambaquis");
 const subtitle = ref("Milênios de história e arte na costa brasileira.");
 const ctaText = ref("Explorar Coleções");
 </script>
-
 <template>
   <div class="relative w-full h-[60vh] md:h-[80vh] overflow-hidden">
     <div
@@ -15,7 +13,6 @@ const ctaText = ref("Explorar Coleções");
     >
       <div class="absolute inset-0 bg-black opacity-50"></div>
     </div>
-
     <div
       class="relative z-10 flex flex-col justify-center items-center h-full text-center px-4"
     >

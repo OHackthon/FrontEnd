@@ -8,23 +8,17 @@ import { useLoading } from "@/stores/loading";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/css/index.css";
 import HeaderNav from '@/components/HeaderNav.vue'
-
 const loadingStore = useLoading();
 const itensAcervoStore = useItensAcervoStore();
 const route = useRoute();
 const router = useRouter();
-
 onMounted(async () => {
   loadingStore.isLoading = true;
   await itensAcervoStore.fetchItens();
   loadingStore.isLoading = false;
 });
-
-// --- 2. OPÇÕES DE FILTRO DINÂMICAS ---
-// Computed que extrai opções únicas dos dados carregados
 const opcoesFiltro = computed(() => {
   if (itensAcervoStore.itensAcervo.length === 0) {
-    // Sem dados, sem opções de filtro
     return {
       colecao: [],
       materia: [],
@@ -33,8 +27,6 @@ const opcoesFiltro = computed(() => {
       estado: [],
     };
   }
-
-  // === EXTRAI OPÇÕES ÚNICAS DOS DADOS REAIS ===
   const colecoes = [
     ...new Set(
       itensAcervoStore.itensAcervo
@@ -42,7 +34,6 @@ const opcoesFiltro = computed(() => {
         .filter(Boolean)
     ),
   ];
-
   const materias = [
     ...new Set(
       itensAcervoStore.itensAcervo
@@ -50,7 +41,6 @@ const opcoesFiltro = computed(() => {
         .filter((val) => typeof val === 'string')
     ),
   ];
-
   const subtipos = [
     ...new Set(
       itensAcervoStore.itensAcervo
@@ -58,7 +48,6 @@ const opcoesFiltro = computed(() => {
         .filter((val) => typeof val === 'string')
     ),
   ];
-
   const localizacoes = [
     ...new Set(
       itensAcervoStore.itensAcervo
@@ -74,7 +63,6 @@ const opcoesFiltro = computed(() => {
         .filter((val) => typeof val === 'string')
     ),
   ];
-
   const estados = [
     ...new Set(
       itensAcervoStore.itensAcervo
@@ -82,7 +70,6 @@ const opcoesFiltro = computed(() => {
         .filter(Boolean)
     ),
   ];
-
   return {
     colecao: colecoes.sort(),
     materia: materias.sort(),
@@ -91,15 +78,12 @@ const opcoesFiltro = computed(() => {
     estado: estados.sort(),
   };
 });
-
 const paginaAtual = ref(1);
 const itensPorPagina = ref(6);
 const termoBuscaInput = ref(route.query.q || "");
-
 const realizarBusca = () => {
   router.push({ query: { ...route.query, q: termoBuscaInput.value } });
 };
-
 const syncFiltersFromUrl = () => {
   const query = route.query;
   termoBuscaInput.value = query.q || "";
@@ -118,19 +102,15 @@ const syncFiltersFromUrl = () => {
   });
   itensAcervoStore.atualizarFiltros(novosFiltros);
 };
-
 onMounted(syncFiltersFromUrl);
 watch(() => route.query, syncFiltersFromUrl);
-
 watch([() => itensAcervoStore.filtrosAtivos, itensPorPagina], () => {
   paginaAtual.value = 1;
 });
-
 const itensProcessados = computed(() => {
   return itensAcervoStore.itensAcervoFiltrados.filter((item) => {
     const termoBusca = (termoBuscaInput.value || "").toLowerCase();
     if (termoBusca === "") return true;
-
     const superStringItem = [
       item.titulo,
       item.nome,
@@ -142,49 +122,39 @@ const itensProcessados = computed(() => {
     ]
       .join(" ")
       .toLowerCase();
-
     return superStringItem.includes(termoBusca);
   });
 });
-
 const itensPaginados = computed(() => {
   const inicio = (paginaAtual.value - 1) * itensPorPagina.value;
   const fim = inicio + itensPorPagina.value;
   return itensProcessados.value.slice(inicio, fim);
 });
-
 const totalPaginas = computed(() =>
   Math.ceil(itensProcessados.value.length / itensPorPagina.value)
 );
-
 const mudarPagina = (p) => {
   paginaAtual.value = p;
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
-
 const limparTudo = () => {
   itensAcervoStore.limparFiltros();
   router.replace({ query: { q: route.query.q } });
 };
-
 const atualizarFiltros = (novosFiltros) => {
   itensAcervoStore.atualizarFiltros(novosFiltros);
 };
 </script>
-
 <template>
   <div class="min-h-screen bg-white font-sans text-gray-900 pb-20">
     <HeaderNav />
-
     <div class="max-w-[1600px] mx-auto px-6 flex flex-col lg:flex-row pt-8">
       <SideFilter
         :options="opcoesFiltro"
         :filtrosAtivos="itensAcervoStore.filtrosAtivos"
         @update:selection="atualizarFiltros"
       />
-
       <main class="flex-1 pl-0 lg:pl-10 mt-6 lg:mt-0">
-        <!-- Search Bar -->
         <div class="mb-6">
           <div class="relative">
             <input
@@ -207,12 +177,9 @@ const atualizarFiltros = (novosFiltros) => {
             </button>
           </div>
         </div>
-
-        <!-- Barra de Controles -->
         <div
           class="mb-6 flex flex-wrap justify-between items-center gap-4 border-b border-gray-100 pb-4"
         >
-          <!-- Info de Resultados -->
           <div class="text-sm text-gray-600 flex items-center gap-2">
             <span v-if="route.query.q"
               >Busca: <strong>"{{ route.query.q }}"</strong> •
@@ -221,8 +188,6 @@ const atualizarFiltros = (novosFiltros) => {
               ><strong>{{ itensProcessados.length }}</strong> resultados</span
             >
           </div>
-
-          <!-- Seletor de Paginação -->
           <div class="flex items-center gap-2">
             <label class="text-xs font-bold uppercase tracking-widest text-gray-400"
               >Exibir:</label
@@ -238,20 +203,12 @@ const atualizarFiltros = (novosFiltros) => {
             </select>
           </div>
         </div>
-
-        <!-- ✅ GRID DE CARDS - DADOS FILTRADOS EM TEMPO REAL -->
-        <!-- Os dados aqui já passaram por todos os filtros:
-             1. Filtros de checkbox (store)
-             2. Filtro de busca por texto
-             3. Paginação -->
         <div
           v-if="itensPaginados.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12"
         >
           <AcervoCard v-for="item in itensPaginados" :key="item.id" :item="item" />
         </div>
-
-        <!-- Empty State -->
         <div
           v-else-if="itensAcervoStore.itensAcervo.length === 0"
           class="text-center py-20 flex flex-col items-center"
@@ -265,8 +222,6 @@ const atualizarFiltros = (novosFiltros) => {
             Limpar filtros
           </button>
         </div>
-
-        <!-- Estado quando não há itens após filtros -->
         <div v-else class="text-center py-20 flex flex-col items-center">
           <p class="text-gray-500 text-lg mb-2">
             Nenhum item corresponde aos filtros selecionados.
@@ -279,8 +234,6 @@ const atualizarFiltros = (novosFiltros) => {
             Limpar filtros
           </button>
         </div>
-
-        <!-- Paginação -->
         <div
           v-if="totalPaginas > 1"
           class="mt-16 flex justify-center gap-2 border-t border-gray-100 pt-8 select-none"
@@ -293,7 +246,6 @@ const atualizarFiltros = (novosFiltros) => {
           >
             &larr;
           </button>
-
           <button
             type="button"
             v-for="p in totalPaginas"
@@ -308,7 +260,6 @@ const atualizarFiltros = (novosFiltros) => {
           >
             {{ p }}
           </button>
-
           <button
             type="button"
             @click="mudarPagina(paginaAtual + 1)"

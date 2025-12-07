@@ -4,12 +4,10 @@ import { useItensAcervoStore } from "@/stores/itensAcervo";
 import { useColecoesStore } from "@/stores/colecoes";
 import { useCategoriasStore } from "@/stores/categorias";
 import { useLocalizacoesStore } from "@/stores/localizacoes";
-
 const itensStore = useItensAcervoStore();
 const colecoesStore = useColecoesStore();
 const categoriasStore = useCategoriasStore();
 const localizacoesStore = useLocalizacoesStore();
-
 onMounted(async () => {
   await Promise.all([
     itensStore.fetchItens(),
@@ -18,42 +16,32 @@ onMounted(async () => {
     localizacoesStore.fetchLocalizacoes(),
   ]);
 });
-
-// --- ESTADO DA UI ---
 const searchQuery = ref("");
 const selectedColecao = ref("");
 const selectedCategoria = ref("");
 const selectedLocalizacao = ref("");
 const showModal = ref(false);
-const modalMode = ref("create"); // 'create' | 'edit'
+const modalMode = ref("create"); 
 const currentItem = ref({});
-
-// --- LÓGICA COMPUTADA (FILTROS) ---
 const filteredItems = computed(() => {
   const q = searchQuery.value.toLowerCase();
   return itensStore.itensAcervo.filter((item) => {
     const matchesSearch =
       item.titulo?.toLowerCase().includes(q) ||
       item.colecao?.nome_colecao?.toLowerCase().includes(q);
-
     const matchesColecao = selectedColecao.value
       ? (item.colecao?.id || item.colecao) == selectedColecao.value
       : true;
-
     const matchesCategoria = selectedCategoria.value
       ? (item.categoria_acervo?.id || item.categoria_acervo) == selectedCategoria.value
       : true;
-
     const matchesLocalizacao = selectedLocalizacao.value
       ? (item.localizacao_atual?.id || item.localizacao_atual) ==
         selectedLocalizacao.value
       : true;
-
     return matchesSearch && matchesColecao && matchesCategoria && matchesLocalizacao;
   });
 });
-
-// --- AÇÕES ---
 const openModal = (mode, item = null) => {
   modalMode.value = mode;
   if (mode === "create") {
@@ -67,8 +55,6 @@ const openModal = (mode, item = null) => {
       estado_conservacao: "",
     };
   } else {
-    // Clone item to avoid direct mutation
-    // Ensure IDs are used for selects if objects are returned
     currentItem.value = {
       ...item,
       colecao: item.colecao?.id || item.colecao,
@@ -78,39 +64,28 @@ const openModal = (mode, item = null) => {
   }
   showModal.value = true;
 };
-
 const saveItem = async () => {
-  // Prepare payload (ensure IDs are sent)
   const payload = { ...currentItem.value };
-
   if (modalMode.value === "create") {
     await itensStore.createItemAcervo(payload);
   } else {
-    // Assuming update action exists, if not we might need to add it to store
-    // await itensStore.updateItemAcervo(payload)
     console.warn("Update not implemented in store yet");
   }
   showModal.value = false;
   await itensStore.fetchItens();
 };
-
 const deleteItem = async (id) => {
   if (confirm("Tem certeza que deseja excluir este item?")) {
-    // await itensStore.deleteItemAcervo(id)
     console.warn("Delete not implemented in store yet");
   }
 };
-
 const fileInput = ref(null);
-
 const triggerFileInput = () => {
   fileInput.value.click();
 };
-
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
-
   try {
     const result = await itensStore.uploadExcel(file);
     alert(result.message || 'Importação concluída!');
@@ -121,21 +96,18 @@ const handleFileUpload = async (event) => {
   } catch (error) {
     alert('Erro ao importar arquivo: ' + (error.response?.data?.error || error.message));
   } finally {
-    event.target.value = ''; // Reset input
+    event.target.value = ''; 
   }
 };
-
 function formatarData(dataIso) {
   if (!dataIso) return "";
   const data = new Date(dataIso);
   return data.toLocaleDateString("pt-BR");
 }
 </script>
-
 <template>
   <div class="font-sans text-[#1C1C1C]">
     <main class="w-full">
-      <!-- PAGE HEADER -->
       <header
         class="flex flex-col md:flex-row md:items-start md:justify-between mb-10 gap-4"
       >
@@ -178,16 +150,12 @@ function formatarData(dataIso) {
           </button>
         </div>
       </header>
-
-      <!-- LISTA -->
       <section class="mb-12">
         <div
           class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-4 gap-4"
         >
           <h2 class="text-xl font-bold text-[#1C1C1C]">Lista de Artefatos</h2>
-
           <div class="flex flex-col md:flex-row gap-2 w-full xl:w-auto">
-            <!-- Filtro Coleção -->
             <select
               v-model="selectedColecao"
               class="rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700 focus:border-[#0F766E] focus:outline-none focus:ring-1 focus:ring-[#0F766E] shadow-sm"
@@ -197,8 +165,6 @@ function formatarData(dataIso) {
                 {{ col.nome_colecao }}
               </option>
             </select>
-
-            <!-- Filtro Categoria -->
             <select
               v-model="selectedCategoria"
               class="rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700 focus:border-[#0F766E] focus:outline-none focus:ring-1 focus:ring-[#0F766E] shadow-sm"
@@ -212,8 +178,6 @@ function formatarData(dataIso) {
                 {{ cat.nome }}
               </option>
             </select>
-
-            <!-- Filtro Localização -->
             <select
               v-model="selectedLocalizacao"
               class="rounded-lg border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700 focus:border-[#0F766E] focus:outline-none focus:ring-1 focus:ring-[#0F766E] shadow-sm"
@@ -227,7 +191,6 @@ function formatarData(dataIso) {
                 {{ loc.nome_local }}
               </option>
             </select>
-
             <div class="relative w-full md:w-64">
               <input
                 v-model="searchQuery"
@@ -255,7 +218,6 @@ function formatarData(dataIso) {
             </div>
           </div>
         </div>
-
         <div class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
           <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-[#F9FAFB]">
@@ -353,8 +315,6 @@ function formatarData(dataIso) {
         </div>
       </section>
     </main>
-
-    <!-- MODAL -->
     <div
       v-if="showModal"
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
@@ -386,7 +346,6 @@ function formatarData(dataIso) {
               class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none"
             />
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Coleção</label>
             <select
@@ -399,7 +358,6 @@ function formatarData(dataIso) {
               </option>
             </select>
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
             <select
@@ -416,7 +374,6 @@ function formatarData(dataIso) {
               </option>
             </select>
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1"
               >Localização Atual</label
@@ -435,7 +392,6 @@ function formatarData(dataIso) {
               </option>
             </select>
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1"
               >Estado de Conservação</label
@@ -446,7 +402,6 @@ function formatarData(dataIso) {
               class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none"
             />
           </div>
-
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <textarea
@@ -474,7 +429,6 @@ function formatarData(dataIso) {
     </div>
   </div>
 </template>
-
 <style scoped>
 @keyframes fadeIn {
   from {

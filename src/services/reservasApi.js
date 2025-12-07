@@ -1,5 +1,4 @@
 import API from '@/services/axiosInterceptor.js'
-
 export default class ReservasApi {
     async fetchReservas() {
         const response = await API.get('reservas/')

@@ -1,16 +1,11 @@
 <template>
   <div class="museu-acervo-profissional">
-    <!-- Cabeçalho -->
     <header class="header">
       <h1>🏛️ Museu do Sambaqui - Acervo Digital</h1>
       <p>Sistema de consulta com arquitetura profissional</p>
     </header>
-
-    <!-- Painel de Filtros -->
     <div class="filtros-container">
       <h2>🔍 Filtros de Busca</h2>
-
-      <!-- Busca Geral -->
       <div class="filtro-group">
         <label for="buscaGeral">Busca Geral:</label>
         <input
@@ -21,8 +16,6 @@
           @input="debounceSearch"
         />
       </div>
-
-      <!-- Estado de Conservação -->
       <div class="filtro-group">
         <label for="estado">Estado de Conservação:</label>
         <select 
@@ -37,8 +30,6 @@
           <option value="DETERIORADO">Deteriorado</option>
         </select>
       </div>
-
-      <!-- Coleção -->
       <div class="filtro-group">
         <label for="colecao">Coleção:</label>
         <select 
@@ -56,8 +47,6 @@
           </option>
         </select>
       </div>
-
-      <!-- Matéria-Prima -->
       <div class="filtro-group">
         <label for="materiaPrima">Matéria-Prima:</label>
         <select 
@@ -75,8 +64,6 @@
           </option>
         </select>
       </div>
-
-      <!-- Procedência -->
       <div class="filtro-group">
         <label for="procedencia">Procedência:</label>
         <input
@@ -87,8 +74,6 @@
           @input="debounceSearch"
         />
       </div>
-
-      <!-- Datação -->
       <div class="filtro-group">
         <label for="datacao">Período/Datação:</label>
         <input
@@ -99,19 +84,13 @@
           @input="debounceSearch"
         />
       </div>
-
-      <!-- Botão Limpar -->
       <button @click="itemAcervoStore.limparFiltros()" class="btn-limpar">
         🗑️ Limpar Filtros
       </button>
     </div>
-
-    <!-- Loading -->
     <div v-if="loadingStore.isLoading" class="loading">
       ⏳ Carregando...
     </div>
-
-    <!-- Status da Busca -->
     <div v-else class="status-busca">
       <p v-if="itemAcervoStore.itensAcervo.length === 0">
         📭 Nenhum item encontrado com os filtros aplicados
@@ -121,20 +100,14 @@
         - Página {{ itemAcervoStore.paginacao.paginaAtual }} de {{ itemAcervoStore.paginacao.totalPaginas }}
       </p>
     </div>
-
-    <!-- Lista de Itens -->
     <div class="itens-grid">
       <div v-for="item in itemAcervoStore.itensAcervo" :key="item.id" class="item-card">
-        <!-- Imagem -->
         <div class="item-imagem">
           <img v-if="item.imagem" :src="item.imagem" :alt="item.titulo" />
           <div v-else class="sem-imagem">🏺</div>
         </div>
-
-        <!-- Informações -->
         <div class="item-info">
           <h3>{{ item.titulo || "Sem título" }}</h3>
-
           <div class="item-detalhes">
             <p><strong>ID:</strong> #{{ item.id }}</p>
             <p v-if="item.procedencia">
@@ -154,8 +127,6 @@
               <strong>Material:</strong> {{ item.materia_prima_nome }}
             </p>
           </div>
-
-          <!-- Descrição -->
           <p v-if="item.descricao" class="item-descricao">
             {{
               item.descricao.length > 100
@@ -166,8 +137,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Paginação -->
     <div v-if="itemAcervoStore.paginacao.totalPaginas > 1" class="paginacao">
       <button
         @click="itemAcervoStore.mudarPagina(itemAcervoStore.paginacao.paginaAtual - 1)"
@@ -176,11 +145,9 @@
       >
         ← Anterior
       </button>
-
       <span class="pagina-info">
         Página {{ itemAcervoStore.paginacao.paginaAtual }} de {{ itemAcervoStore.paginacao.totalPaginas }}
       </span>
-
       <button
         @click="itemAcervoStore.mudarPagina(itemAcervoStore.paginacao.paginaAtual + 1)"
         :disabled="itemAcervoStore.paginacao.paginaAtual === itemAcervoStore.paginacao.totalPaginas"
@@ -189,8 +156,6 @@
         Próxima →
       </button>
     </div>
-
-    <!-- Filtros Ativos -->
     <div v-if="itemAcervoStore.temFiltrosAtivos()" class="filtros-ativos">
       <h3>🏷️ Filtros Aplicados:</h3>
       <div class="tags-filtros">
@@ -216,22 +181,18 @@
     </div>
   </div>
 </template>
-
 <script>
 import { useItemAcervoStore } from '@/stores/itemAcervoStore'
 import { useColecaoStore } from '@/stores/colecaoStore'
 import { useMateriaPrimaStore } from '@/stores/materiaPrimaStore'
 import { useLoading } from '@/stores/loading.js'
-
 export default {
   name: "MuseuAcervoProfissional",
-  
   setup() {
     const itemAcervoStore = useItemAcervoStore()
     const colecaoStore = useColecaoStore()
     const materiaPrimaStore = useMateriaPrimaStore()
     const loadingStore = useLoading()
-
     return {
       itemAcervoStore,
       colecaoStore,
@@ -239,35 +200,27 @@ export default {
       loadingStore
     }
   },
-
   data() {
     return {
       debounceTimer: null
     }
   },
-
   async mounted() {
-    // Carrega dados iniciais
     await Promise.all([
       this.colecaoStore.fetchColecoesComItens(),
       this.materiaPrimaStore.fetchMateriasPrimas(),
       this.itemAcervoStore.buscarItensComFiltros()
     ])
   },
-
   methods: {
-    // Debounce para campos de texto
     debounceSearch() {
       if (this.debounceTimer) {
         clearTimeout(this.debounceTimer)
       }
-      
       this.debounceTimer = setTimeout(() => {
         this.itemAcervoStore.buscarItensComFiltros()
       }, 500)
     },
-
-    // Helper para labels de estado
     getEstadoLabel(estado) {
       const labels = {
         BOM: "Bom",
@@ -280,16 +233,13 @@ export default {
   }
 }
 </script>
-
 <style scoped>
-/* Mesmos estilos do exemplo anterior */
 .museu-acervo-profissional {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
-
 .header {
   text-align: center;
   margin-bottom: 30px;
@@ -298,18 +248,15 @@ export default {
   color: white;
   border-radius: 10px;
 }
-
 .header h1 {
   margin: 0 0 10px 0;
   font-size: 2.5em;
 }
-
 .header p {
   margin: 0;
   font-size: 1.2em;
   opacity: 0.9;
 }
-
 .filtros-container {
   background: #f8f9fa;
   padding: 20px;
@@ -317,23 +264,19 @@ export default {
   margin-bottom: 20px;
   border: 1px solid #dee2e6;
 }
-
 .filtros-container h2 {
   margin-top: 0;
   color: #495057;
 }
-
 .filtro-group {
   margin-bottom: 15px;
 }
-
 .filtro-group label {
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
   color: #495057;
 }
-
 .filtro-group input,
 .filtro-group select {
   width: 100%;
@@ -342,14 +285,12 @@ export default {
   border-radius: 5px;
   font-size: 14px;
 }
-
 .filtro-group input:focus,
 .filtro-group select:focus {
   outline: none;
   border-color: #8b4513;
   box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
 }
-
 .btn-limpar {
   background: #dc3545;
   color: white;
@@ -360,11 +301,9 @@ export default {
   font-weight: 600;
   margin-top: 10px;
 }
-
 .btn-limpar:hover {
   background: #c82333;
 }
-
 .loading {
   text-align: center;
   font-size: 1.2em;
@@ -372,21 +311,18 @@ export default {
   color: #6c757d;
   margin: 20px 0;
 }
-
 .status-busca {
   text-align: center;
   margin: 20px 0;
   font-weight: 600;
   color: #6c757d;
 }
-
 .itens-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin: 20px 0;
 }
-
 .item-card {
   background: white;
   border: 1px solid #dee2e6;
@@ -395,12 +331,10 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .item-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
-
 .item-imagem {
   height: 200px;
   background: #f8f9fa;
@@ -409,50 +343,41 @@ export default {
   justify-content: center;
   overflow: hidden;
 }
-
 .item-imagem img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-
 .sem-imagem {
   font-size: 3em;
   color: #adb5bd;
 }
-
 .item-info {
   padding: 15px;
 }
-
 .item-info h3 {
   margin: 0 0 10px 0;
   color: #495057;
   font-size: 1.1em;
 }
-
 .item-detalhes p {
   margin: 5px 0;
   font-size: 0.9em;
   color: #6c757d;
 }
-
 .item-detalhes strong {
   color: #495057;
 }
-
 .status-bom { color: #28a745; font-weight: 600; }
 .status-regular { color: #ffc107; font-weight: 600; }
 .status-fragmentado { color: #fd7e14; font-weight: 600; }
 .status-deteriorado { color: #dc3545; font-weight: 600; }
-
 .item-descricao {
   margin-top: 10px;
   font-size: 0.9em;
   color: #6c757d;
   font-style: italic;
 }
-
 .paginacao {
   display: flex;
   justify-content: center;
@@ -460,7 +385,6 @@ export default {
   gap: 15px;
   margin: 30px 0;
 }
-
 .btn-pagina {
   padding: 8px 16px;
   border: 1px solid #8b4513;
@@ -470,40 +394,33 @@ export default {
   cursor: pointer;
   font-weight: 600;
 }
-
 .btn-pagina:hover:not(:disabled) {
   background: #8b4513;
   color: white;
 }
-
 .btn-pagina:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 .pagina-info {
   font-weight: 600;
   color: #495057;
 }
-
 .filtros-ativos {
   background: #e9ecef;
   padding: 15px;
   border-radius: 10px;
   margin-top: 20px;
 }
-
 .filtros-ativos h3 {
   margin: 0 0 10px 0;
   color: #495057;
 }
-
 .tags-filtros {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 }
-
 .tag {
   background: #8b4513;
   color: white;
@@ -512,29 +429,23 @@ export default {
   font-size: 0.9em;
   font-weight: 600;
 }
-
 @media (max-width: 768px) {
   .museu-acervo-profissional {
     padding: 10px;
   }
-
   .header h1 {
     font-size: 2em;
   }
-
   .header p {
     font-size: 1em;
   }
-
   .itens-grid {
     grid-template-columns: 1fr;
   }
-
   .paginacao {
     flex-direction: column;
     gap: 10px;
   }
-
   .tags-filtros {
     justify-content: center;
   }

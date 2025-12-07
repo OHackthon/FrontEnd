@@ -3,29 +3,21 @@ import { ref, computed, onMounted } from 'vue';
 import { useLocationStore } from '@/stores/locationStore';
 import SideBar from '@/components/SideBar.vue';
 import NavBar from '@/components/NavBar.vue';
-
 const store = useLocationStore();
 const showModal = ref(false);
 const isEditing = ref(false);
 const searchQuery = ref('');
 const submitting = ref(false);
-
-// Estado do Formulário
 const form = ref({
     id: null,
     nome_local: '',
     tipo_ambiente: 'Reserva',
     capacidade_estimada: null
 });
-
-// Opções de Tipo (Poderia vir do backend)
 const tiposAmbiente = ['Reserva', 'Exposição', 'Laboratório', 'Administrativo', 'Externo'];
-
 onMounted(() => {
     store.fetchLocations();
 });
-
-// Filtro
 const filteredLocations = computed(() => {
     if (!searchQuery.value) return store.sortedLocations;
     const lower = searchQuery.value.toLowerCase();
@@ -34,20 +26,16 @@ const filteredLocations = computed(() => {
         l.tipo_ambiente.toLowerCase().includes(lower)
     );
 });
-
-// Ações
 const openCreateModal = () => {
     isEditing.value = false;
     form.value = { id: null, nome_local: '', tipo_ambiente: 'Reserva', capacidade_estimada: null };
     showModal.value = true;
 };
-
 const openEditModal = (location) => {
     isEditing.value = true;
     form.value = { ...location };
     showModal.value = true;
 };
-
 const handleSubmit = async () => {
     submitting.value = true;
     try {
@@ -63,20 +51,17 @@ const handleSubmit = async () => {
         submitting.value = false;
     }
 };
-
 const handleDelete = async (id) => {
     if (confirm('Tem certeza que deseja remover este local? Isso pode afetar o histórico.')) {
         await store.deleteLocation(id);
     }
 };
 </script>
-
 <template>
     <div class="flex min-h-screen bg-gray-50 font-sans">
         <SideBar />
         <div class="flex-1 flex flex-col md:ml-64">
             <NavBar />
-            
             <main class="p-8 max-w-6xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -87,13 +72,9 @@ const handleDelete = async (id) => {
                         + Nova Localização
                     </button>
                 </div>
-
-                <!-- Filtro -->
                 <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
                     <input v-model="searchQuery" type="text" placeholder="Buscar local..." class="w-full border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500">
                 </div>
-
-                <!-- Tabela -->
                 <div class="bg-white rounded-lg shadow overflow-hidden">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -126,8 +107,6 @@ const handleDelete = async (id) => {
                 </div>
             </main>
         </div>
-
-        <!-- Modal -->
         <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
                 <h3 class="text-lg font-bold mb-4">{{ isEditing ? 'Editar' : 'Nova' }} Localização</h3>
@@ -157,7 +136,6 @@ const handleDelete = async (id) => {
         </div>
     </div>
 </template>
-
 <style scoped>
 .btn-primary {
     @apply bg-teal-700 text-white px-4 py-2 rounded-md hover:bg-teal-800 transition-colors font-medium shadow-sm;

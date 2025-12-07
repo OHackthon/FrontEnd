@@ -1,9 +1,7 @@
 <script setup>
 import { useNotificationStore } from '@/stores/notification'
 import { ref, onMounted } from 'vue'
-
 const notificationStore = useNotificationStore()
-
 const getNotificationIcon = (type) => {
   switch (type) {
     case 'success':
@@ -17,10 +15,8 @@ const getNotificationIcon = (type) => {
       return 'M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
   }
 }
-
 const getNotificationClasses = (type) => {
   const baseClasses = 'relative flex w-full max-w-sm items-center gap-3 rounded-lg p-4 shadow-lg transition-all duration-300 transform'
-  
   switch (type) {
     case 'success':
       return `${baseClasses} bg-green-50 border border-green-200 text-green-800`
@@ -33,7 +29,6 @@ const getNotificationClasses = (type) => {
       return `${baseClasses} bg-blue-50 border border-blue-200 text-blue-800`
   }
 }
-
 const getIconClasses = (type) => {
   switch (type) {
     case 'success':
@@ -48,7 +43,6 @@ const getIconClasses = (type) => {
   }
 }
 </script>
-
 <template>
   <div class="fixed top-4 right-4 z-50 space-y-3 pointer-events-none">
     <transition-group
@@ -62,7 +56,6 @@ const getIconClasses = (type) => {
         :class="getNotificationClasses(notification.type)"
         class="pointer-events-auto"
       >
-        <!-- Icon -->
         <div class="flex-shrink-0">
           <svg 
             :class="getIconClasses(notification.type)"
@@ -78,13 +71,9 @@ const getIconClasses = (type) => {
             />
           </svg>
         </div>
-
-        <!-- Message -->
         <div class="flex-1 min-w-0">
           <p class="text-sm font-medium">{{ notification.message }}</p>
         </div>
-
-        <!-- Close Button -->
         <button
           @click="notificationStore.removeNotification(notification.id)"
           class="flex-shrink-0 ml-2 p-1 rounded-full hover:bg-black hover:bg-opacity-10 transition-colors"
@@ -97,23 +86,19 @@ const getIconClasses = (type) => {
     </transition-group>
   </div>
 </template>
-
 <style scoped>
 .notification-enter-active,
 .notification-leave-active {
   transition: all 0.3s ease;
 }
-
 .notification-enter-from {
   opacity: 0;
   transform: translateX(100%) scale(0.95);
 }
-
 .notification-leave-to {
   opacity: 0;
   transform: translateX(100%) scale(0.95);
 }
-
 .notification-move {
   transition: transform 0.3s ease;
 }

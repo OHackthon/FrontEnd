@@ -1,13 +1,10 @@
 import API from '@/services/axiosInterceptor.js'
-
 export default class MateriasPrimasApi {
   async fetchMateriasPrimas() {
     const response = await API.get('materias-primas/')
     return response.data
   }
-
   async fetchMateriasPrimasChoices() {
-    // Retorna as choices estáticas baseadas no modelo Django
     return [
       { value: 'ANIMAL', label: 'Animal' },
       { value: 'VEGETAL', label: 'Vegetal' },
@@ -15,7 +12,6 @@ export default class MateriasPrimasApi {
       { value: 'OUTRO', label: 'Outro' },
     ]
   }
-
   async createMateriaPrima(materiaPrima) {
     const response = await API.post('materias-primas/', materiaPrima)
     return response.data

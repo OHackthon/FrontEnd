@@ -6,30 +6,23 @@ import { useReservasStore } from '@/stores/reservas.js'
 import { useCategoriasStore } from '@/stores/categorias.js'
 import { Bar, Doughnut, Line } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement, PointElement, LineElement } from 'chart.js'
-
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement, PointElement, LineElement)
-
 const reservasStore = useReservasStore()
 const colecoesStore = useColecoesStore()
 const itensAcervoStore = useItensAcervoStore()
 const categoriasStore = useCategoriasStore()
-
 onMounted(async () => {
   await colecoesStore.fetchColecoes()
   await itensAcervoStore.fetchItens()
   await reservasStore.fetchReservas()
   await categoriasStore.fetchCategorias()
 })
-
-// --- Chart Data Computations ---
-
 const collectionChartData = computed(() => {
   const counts = {}
   itensAcervoStore.itensAcervo.forEach(item => {
     const name = item.colecao?.nome_colecao || 'Sem Coleção'
     counts[name] = (counts[name] || 0) + 1
   })
-
   return {
     labels: Object.keys(counts),
     datasets: [
@@ -41,14 +34,12 @@ const collectionChartData = computed(() => {
     ]
   }
 })
-
 const categoryChartData = computed(() => {
   const counts = {}
   itensAcervoStore.itensAcervo.forEach(item => {
     const name = item.categoria_acervo?.nome || 'Sem Categoria'
     counts[name] = (counts[name] || 0) + 1
   })
-
   return {
     labels: Object.keys(counts),
     datasets: [
@@ -59,7 +50,6 @@ const categoryChartData = computed(() => {
     ]
   }
 })
-
 const groupByMonth = (items, dateField) => {
   const counts = {}
   items.forEach(item => {
@@ -68,9 +58,7 @@ const groupByMonth = (items, dateField) => {
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
     counts[key] = (counts[key] || 0) + 1
   })
-
   const sortedKeys = Object.keys(counts).sort()
-
   return {
     labels: sortedKeys.map(k => {
       const [year, month] = k.split('-')
@@ -80,7 +68,6 @@ const groupByMonth = (items, dateField) => {
     data: sortedKeys.map(k => counts[k])
   }
 }
-
 const collectionsOverTimeChartData = computed(() => {
   const { labels, data } = groupByMonth(colecoesStore.colecoes, 'data_registro')
   return {
@@ -97,7 +84,6 @@ const collectionsOverTimeChartData = computed(() => {
     ]
   }
 })
-
 const movementsOverTimeChartData = computed(() => {
   const { labels, data } = groupByMonth(reservasStore.reservas, 'data_movimentacao')
   return {
@@ -114,17 +100,13 @@ const movementsOverTimeChartData = computed(() => {
     ]
   }
 })
-
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false
 }
-
 function formatarData(dataIso) {
   if (!dataIso) return ''
-
   const data = new Date(dataIso)
-
   return data.toLocaleString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
@@ -136,18 +118,13 @@ function formatarData(dataIso) {
   })
 }
 </script>
-
 <template>
   <div>
       <div>
         <h1 class="text-3xl font-bold text-black">Painel de administração</h1>
         <p class="text-gray-500 mt-1">Administre o acervo</p>
       </div>
-
-      <!-- Main Content (Com Scroll Interno) -->
       <main class="flex-1 pt-2 scroll-smooth">
-
-        <!-- Stats Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div
             class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300 flex flex-col justify-between h-40"
@@ -182,8 +159,6 @@ function formatarData(dataIso) {
             </div>
           </div>
         </div>
-
-        <!-- Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Itens por Coleção</h3>
@@ -198,8 +173,6 @@ function formatarData(dataIso) {
                 </div>
             </div>
         </div>
-
-        <!-- Line Charts Section -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">Crescimento de Coleções</h3>
@@ -214,11 +187,7 @@ function formatarData(dataIso) {
                 </div>
             </div>
         </div>
-
-        <!-- Split View Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-          <!-- Atividade Recente -->
           <div class="lg:col-span-3 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h2 class="text-lg font-bold text-gray-800 mb-6">Atividade Recente</h2>
             <div class="flex flex-col space-y-6">

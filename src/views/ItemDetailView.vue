@@ -5,45 +5,34 @@ import { useRoute, useRouter } from 'vue-router'
 import { jsPDF } from "jspdf";
 import AcervoCard from '../components/AcervoCard.vue'
 import HeaderNav from '@/components/HeaderNav.vue'
-
-
 const router = useRouter()
 const route = useRoute()
 const store = useItensAcervoStore()
-
 const item = ref(null)
-
 const carregarItem = () => {
   const id = Number(route.params.id)
   item.value = store.getItemPorId(id) || null
 }
-
 watch(
   () => store.itensAcervo,
   () => carregarItem(),
   { immediate: true }
 )
-
 onMounted(async () => {
   if (store.itensAcervo.length === 0) {
     await store.fetchItens()
   }
   carregarItem()
 })
-
 const relatedColecao = ref([])
 const relatedMateria = ref([])
-
 const imagemAtivaIndex = ref(0)
 const isZoomed = ref(false)
-
 const activeTab = ref('colecao')
 const scrollContainer = ref(null)
-
 const voltarParaCategoria = () => {
   router.push({ name: 'acervototal' })
 }
-
 const imagemAtiva = computed(() => {
   if (!item.value?.imagem) return 'https://placehold.co/800x600?text=Sem+Imagem'
   if (typeof item.value.imagem === 'object' && item.value.imagem.url) {
@@ -54,29 +43,24 @@ const imagemAtiva = computed(() => {
   }
   return 'https://placehold.co/800x600?text=Sem+Imagem'
 })
-
 const toggleZoom = () => {
   isZoomed.value = !isZoomed.value
 }
-
 const currentRelatedItems = computed(() => {
   return activeTab.value === 'colecao'
     ? relatedColecao.value
     : relatedMateria.value
 })
-
 const scrollCarrossel = (direction) => {
   if (scrollContainer.value) {
     const containerWidth = scrollContainer.value.offsetWidth
     const cardWidth = window.innerWidth < 768 ? containerWidth : 300
-
     scrollContainer.value.scrollBy({
       left: direction * cardWidth,
       behavior: 'smooth'
     })
   }
 }
-
 const corEstado = computed(() => {
   if (!item.value?.estado_conservacao) return 'bg-gray-300'
   const st = item.value.estado_conservacao.toLowerCase()
@@ -84,28 +68,22 @@ const corEstado = computed(() => {
   if (st.includes('regular')) return 'bg-yellow-500'
   return 'bg-red-500'
 })
-
 const gerarFichaPDF = async () => {
   if (!item.value) return;
-
   const doc = new jsPDF();
   const margin = 20;
   let y = 20;
-
   doc.setFont("helvetica", "bold");
   doc.setFontSize(16);
   doc.text("Museu Sambaqui de Joinville", 105, y, null, null, "center");
-
   y += 8;
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
   doc.text("Ficha Técnica de Acervo", 105, y, null, null, "center");
-
   y += 10;
   doc.setLineWidth(0.5);
   doc.line(margin, y, 190, y);
   y += 15;
-
   if (imagemAtiva.value && !imagemAtiva.value.includes('placehold.co')) {
     try {
       const getBase64ImageFromURL = (url) => {
@@ -127,14 +105,11 @@ const gerarFichaPDF = async () => {
           };
         });
       };
-
       const imgData = await getBase64ImageFromURL(imagemAtiva.value);
-
       if (imgData) {
         const imgWidth = 80;
         const imgHeight = 60;
         const xPos = (210 - imgWidth) / 2;
-
         doc.addImage(imgData, 'JPEG', xPos, y, imgWidth, imgHeight, undefined, 'FAST');
         y += imgHeight + 15;
       }
@@ -142,37 +117,30 @@ const gerarFichaPDF = async () => {
       console.log("Erro imagem PDF", e);
     }
   }
-
   doc.setFont("times", "bold");
   doc.setFontSize(14);
   const titleLines = doc.splitTextToSize(item.value.titulo, 170);
   doc.text(titleLines, margin, y);
-
   y += (titleLines.length * 7) + 5;
   doc.setFontSize(10);
   doc.setTextColor(100);
   doc.text(`Nº Inventário: ${item.value.numero_acervo}`, margin, y);
   doc.setTextColor(0);
   y += 10;
-
   const addLine = (label, value) => {
     if (!value) return;
     doc.setFont("helvetica", "bold");
     doc.text(`${label}:`, margin, y);
-
     doc.setFont("helvetica", "normal");
     const valueClean = String(value).replace(/undefined/g, "");
     const valueLines = doc.splitTextToSize(valueClean, 130);
     doc.text(valueLines, margin + 40, y);
-
     y += (valueLines.length * 6) + 2;
-
     if (y > 280) {
       doc.addPage();
       y = 20;
     }
   };
-
   addLine("Coleção", item.value.colecao?.nome_colecao || item.value.colecao?.nome);
   addLine("Material", item.value.materia_prima?.materia || item.value.materia_prima?.nome);
   addLine("Dimensões", item.value.dimensoes);
@@ -180,11 +148,9 @@ const gerarFichaPDF = async () => {
   addLine("Procedência", item.value.procedencia);
   addLine("Estado", item.value.estado_conservacao);
   addLine("Localização", item.value.localizacao_atual.nome_local);
-
   y += 5;
   doc.line(margin, y, 190, y);
   y += 10;
-
   if (item.value.descricao_detalhada) {
     doc.setFont("helvetica", "bold");
     doc.text("Descrição / Análise:", margin, y);
@@ -193,21 +159,16 @@ const gerarFichaPDF = async () => {
     const descLines = doc.splitTextToSize(item.value.descricao_detalhada, 170);
     doc.text(descLines, margin, y);
   }
-
   const pageHeight = doc.internal.pageSize.height;
   doc.setFontSize(8);
   doc.setTextColor(150);
   doc.text(`Gerado em ${new Date().toLocaleDateString()} - Sistema de Gestão Museológica`, margin, pageHeight - 10);
-
   doc.save(`Ficha_${item.value.numero_acervo}.pdf`);
 };
 </script>
-
 <template>
   <div class="min-h-screen bg-white font-sans text-gray-900 pb-20">
-
     <HeaderNav />
-
     <div v-if="item" class="max-w-[1600px] mx-auto px-4 sm:px-6 pt-4 sm:pt-8 animate-fade-in">
       <nav class="hidden sm:flex mb-8 items-center justify-between border-b border-gray-100 pb-4">
         <button
@@ -222,18 +183,14 @@ const gerarFichaPDF = async () => {
           <p class="font-mono text-sm font-bold bg-gray-100 px-2 py-1 inline-block rounded mt-1">{{ item.numero_acervo }}</p>
         </div>
       </nav>
-
       <div class="sm:hidden mb-4">
         <button @click="voltarParaCategoria" class="text-gray-500 flex items-center gap-1 text-sm font-medium">
           ← Voltar
         </button>
       </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-24 mb-24">
-
         <div class="lg:col-span-7">
           <div class="lg:sticky lg:top-24">
-
             <div
               class="relative w-full bg-gray-50 rounded-sm border border-gray-100 mb-4 flex items-center justify-center group overflow-hidden p-8"
               style="aspect-ratio: 4/3;"
@@ -254,14 +211,11 @@ const gerarFichaPDF = async () => {
                 </svg>
               </div>
             </div>
-
             <p class="text-[10px] text-gray-400 mt-2 text-center lg:text-left">© Museu Sambaqui de Joinville / Foto:
               Documentação Técnica</p>
           </div>
         </div>
-
         <div class="lg:col-span-5 flex flex-col gap-8 sm:gap-12">
-
           <header>
             <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
               <span
@@ -273,7 +227,6 @@ const gerarFichaPDF = async () => {
             </div>
             <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl text-gray-900 leading-tight mb-4 sm:mb-6">
               {{ item.titulo }}</h1>
-
             <div class="flex gap-3">
               <button
                 @click="gerarFichaPDF"
@@ -288,7 +241,6 @@ const gerarFichaPDF = async () => {
               </button>
             </div>
           </header>
-
           <section>
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 pb-2">
               Características</h3>
@@ -303,7 +255,6 @@ const gerarFichaPDF = async () => {
               </div>
             </dl>
           </section>
-
           <section>
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 pb-2">
               Histórico & Local</h3>
@@ -324,7 +275,6 @@ const gerarFichaPDF = async () => {
                 }}</span>
             </div>
           </section>
-
           <section v-if="item.descricao_detalhada">
             <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 pb-2">
               Análise</h3>
@@ -332,7 +282,6 @@ const gerarFichaPDF = async () => {
           </section>
         </div>
       </div>
-
       <section v-if="currentRelatedItems.length > 0" class="border-t border-gray-200 pt-12 sm:pt-16 mb-16">
         <div class="text-center mb-8 sm:mb-10">
           <h2 class="font-serif text-xl sm:text-3xl font-bold text-gray-900 mb-2">Explorar Relacionados</h2>
@@ -366,16 +315,13 @@ const gerarFichaPDF = async () => {
           </button>
         </div>
       </section>
-
     </div>
   </div>
 </template>
-
 <style scoped>
 .animate-fade-in {
   animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -386,11 +332,9 @@ const gerarFichaPDF = async () => {
     transform: translateY(0);
   }
 }
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;

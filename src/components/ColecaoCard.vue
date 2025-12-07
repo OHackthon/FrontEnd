@@ -1,6 +1,5 @@
 <script setup>
 import { defineProps, computed } from 'vue'
-
 const props = defineProps({
   colecao: {
     type: Object,
@@ -8,14 +7,11 @@ const props = defineProps({
     default: () => ({ id: 0, nome: 'Título', image: 'https://picsum.photos/400/300?random=1', descricao: 'Breve descrição...' })
   }
 })
-
-// Simulação de rota dinâmica
 const colecaoPath = computed(() => ({
   name: 'acervototal',
   query: { colecao: props.colecao.nome_colecao }
 }))
 </script>
-
 <template>
   <router-link :to="colecaoPath" class="group block bg-white border border-gray-100 shadow-md hover:shadow-xl transition duration-300 ease-in-out overflow-hidden">
     <div class="p-6">

@@ -1,15 +1,10 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
-
 const props = defineProps({
   options: { type: Object, required: true },
   filtrosAtivos: { type: Object, default: () => ({ colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] }) }
 });
-
 const emit = defineEmits(['update:selection']);
-
-// ✅ ESTADO LOCAL DOS FILTROS SELECIONADOS SINCRONIZADO COM A STORE
-// Usa os filtros ativos da store como valor inicial
 const selected = ref({
   colecao: [...props.filtrosAtivos.colecao],
   materia: [...props.filtrosAtivos.materia], 
@@ -17,8 +12,6 @@ const selected = ref({
   localizacao: [...props.filtrosAtivos.localizacao], 
   estado: [...props.filtrosAtivos.estado]
 });
-
-// ✅ SINCRONIZA QUANDO OS FILTROS DA STORE MUDAM
 watch(() => props.filtrosAtivos, (novosFiltros) => {
   selected.value = {
     colecao: [...novosFiltros.colecao],
@@ -28,45 +21,28 @@ watch(() => props.filtrosAtivos, (novosFiltros) => {
     estado: [...novosFiltros.estado]
   };
 }, { deep: true });
-
 const openSections = ref({
   colecao: true, materia: true, subtipo: true, localizacao: true, estado: true
 });
-
 const isMobileOpen = ref(false);
-
 const toggle = (key) => openSections.value[key] = !openSections.value[key];
-
 const labels = {
   colecao: 'Coleção', materia: 'Matéria Prima', subtipo: 'Sub-tipo', 
   localizacao: 'Localização Física', estado: 'Conservação'
 };
-
 let timeout = null;
-
-// ✅ AQUI ACONTECE A MAGIA DOS FILTROS!
-// Sempre que o usuário clica em um checkbox, este watch é acionado
-// Ele envia os filtros selecionados para o componente pai (AcervoView)
-// com um debounce de 400ms para evitar muitas chamadas desnecessárias
 watch(selected, (newVal) => {
   if (timeout) clearTimeout(timeout);
   timeout = setTimeout(() => {
-    // ✅ EMITE OS FILTROS PARA O COMPONENTE PAI
-    // Este evento vai para AcervoView.vue que chama atualizarFiltros()
     emit('update:selection', JSON.parse(JSON.stringify(newVal)));
   }, 400); 
 }, { deep: true });
-
-// ✅ FUNÇÃO PARA LIMPAR TODOS OS FILTROS
 const limparFiltros = () => {
   selected.value = { colecao: [], materia: [], subtipo: [], localizacao: [], estado: [] };
-  // O watch vai automaticamente emitir os filtros vazios para o componente pai
 };
 </script>
-
 <template>
   <aside class="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-gray-100 lg:pr-6 py-4 flex flex-col">
-    
     <button 
       type="button"
       @click="isMobileOpen = !isMobileOpen"
@@ -82,7 +58,6 @@ const limparFiltros = () => {
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
       </svg>
     </button>
-
     <div class="hidden lg:flex justify-between items-baseline mb-6">
       <h2 class="font-serif font-bold text-xl text-gray-900">Filtros</h2>
       <button 
@@ -94,7 +69,6 @@ const limparFiltros = () => {
         Limpar
       </button>
     </div>
-
     <div 
       class="flex-1 transition-all duration-300 ease-in-out overflow-hidden"
       :class="[
@@ -106,11 +80,8 @@ const limparFiltros = () => {
            Limpar todos os filtros
          </button>
       </div>
-
       <div class="grid grid-cols-1 min-[600px]:grid-cols-2 lg:grid-cols-1 gap-x-8 gap-y-0">
-        
         <div v-for="(lista, key) in options" :key="key" class="border-b border-gray-100 py-4 last:border-0">
-          
           <button type="button" @click="toggle(key)" class="w-full flex justify-between items-center text-left mb-2 outline-none group select-none">
             <span class="text-xs font-bold uppercase tracking-widest text-gray-900 group-hover:text-gray-600 transition-colors">
               {{ labels[key] || key }}
@@ -119,7 +90,6 @@ const limparFiltros = () => {
               ▼
             </span>
           </button>
-
           <div v-if="openSections[key]" class="space-y-2.5 mt-3 pl-1">
             <label v-for="opt in lista" :key="opt" class="flex items-start cursor-pointer group select-none">
               <div class="relative flex items-center h-5">
@@ -139,10 +109,7 @@ const limparFiltros = () => {
             </label>
           </div>
         </div>
-
       </div>
-
     </div>
-
   </aside>
 </template>

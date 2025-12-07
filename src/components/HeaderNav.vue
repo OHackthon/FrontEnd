@@ -1,10 +1,8 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useAuth } from '@/stores/auth.js'
-
 const authStore = useAuth()
 const isMenuOpen = ref(false)
-
 const navItems = computed(() => {
   const items = [
     { name: 'Início', path: '/' },
@@ -12,24 +10,18 @@ const navItems = computed(() => {
     { name: 'Visita virtual', path: '/visita-virtual' },
     { name: 'Sobre o Museu', path: '/about' },
   ]
-
   if (authStore.isLoggedIn) {
     items.push({ name: 'Dashboard', path: '/dashboard' })
   }
-
   return items
 })
-
-
 onMounted(async () => {
   await authStore.fetchCurrentUser()
 })
 </script>
-
 <template>
   <header class="sticky top-0 z-9999 bg-white shadow-sm border-b border-gray-100">
     <div class="px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center h-20">
-      
       <router-link to="/" class="flex items-center">
         <img 
           src="../assets/images/INTEIROPRETO.png" 
@@ -37,7 +29,6 @@ onMounted(async () => {
           class="h-25 w-auto" 
         />
       </router-link>
-
       <nav class="hidden lg:flex space-x-8 text-sm font-medium">
         <router-link 
           v-for="item in navItems" 
@@ -60,7 +51,6 @@ onMounted(async () => {
           class="ml-4 px-4 py-2 text-sm font-semibold bg-gray-900 rounded-full text-white hover:bg-gray-700 transition duration-150 ease-in-out"
         ><span class="text-white">A</span></router-link>
       </nav>
-
       <button 
         @click="isMenuOpen = !isMenuOpen" 
         class="lg:hidden text-gray-500 hover:text-gray-700 transition duration-150 ease-in-out p-2 focus:outline-none focus:ring-2 focus:ring-gray-900"
@@ -70,7 +60,6 @@ onMounted(async () => {
         <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
       </button>
     </div>
-
     <nav v-if="isMenuOpen" class="lg:hidden bg-white border-t border-gray-100">
       <div class="px-4 pt-2 pb-3 space-y-1 sm:px-6">
         <router-link 

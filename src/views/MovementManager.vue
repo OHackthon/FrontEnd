@@ -3,30 +3,23 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { useReservasStore } from "@/stores/reservas.js";
 import { useItensAcervoStore } from "@/stores/itensAcervo.js";
 import { useLocalizacoesStore } from "@/stores/localizacoes.js";
-
 const localizacoesStore = useLocalizacoesStore();
 const itensAcervoStore = useItensAcervoStore();
 const reservaStore = useReservasStore();
-
-// ESTADO DOS FILTROS
 const filters = reactive({
   search: "",
   tipo: "",
   status: "",
 });
-
 const currentItem = ref(null);
 const showReservaModal = ref(false);
-
 onMounted(async () => {
   await reservaStore.fetchReservas();
   await itensAcervoStore.fetchItens();
   await localizacoesStore.fetchLocalizacoes();
 });
-
 function formatarData(dataIso) {
   if (!dataIso) return "";
-
   const data = new Date(dataIso);
   return data.toLocaleString("pt-BR", {
     day: "2-digit",
@@ -38,13 +31,10 @@ function formatarData(dataIso) {
     hour12: false,
   });
 }
-
-// FILTRAGEM DINÂMICA
 const reservasFiltradas = computed(() => {
   let data = reservaStore.reservas;
   const { search, tipo, status } = filters;
   const today = new Date();
-
   if (search) {
     const s = search.toLowerCase();
     data = data.filter(
@@ -58,16 +48,13 @@ const reservasFiltradas = computed(() => {
   }
   return data;
 });
-
 function handleSearch(e) {
   filters.search = e.target.value;
 }
-
 const openReservaModal = () => {
   currentItem.value = reservaStore.newReserva;
   showReservaModal.value = true;
 };
-
 const saveReserva = async () => {
   const success = await reservaStore.createReserva(currentItem.value);
   if (success) {
@@ -75,7 +62,6 @@ const saveReserva = async () => {
   }
 };
 </script>
-
 <template>
   <div class="font-sans text-gray-800">
     <div class="flex-1 flex flex-col transition-all duration-300">
@@ -113,8 +99,6 @@ const saveReserva = async () => {
             </button>
           </div>
         </header>
-
-        <!-- Filtros -->
         <div
           class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm mb-6 p-4 flex flex-wrap items-center gap-4"
         >
@@ -134,8 +118,6 @@ const saveReserva = async () => {
             <option value="EXTERNA">Externo</option>
           </select>
         </div>
-
-        <!-- Tabela filtrada-->
         <div class="overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
           <table class="min-w-full divide-y divide-gray-100">
             <thead class="bg-[#F9FAFB]">
@@ -213,7 +195,6 @@ const saveReserva = async () => {
             </tbody>
           </table>
         </div>
-
         <div
           v-if="showReservaModal"
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"

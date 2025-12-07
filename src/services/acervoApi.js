@@ -1,5 +1,4 @@
 import API from '@/services/axiosInterceptor.js'
-
 export default class AcervoApi {
     async fetchAcervos() {
         const response =  await API.get('acervos/')

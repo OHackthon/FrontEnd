@@ -4,7 +4,6 @@ import CategoriaAcervoApi from '@/services/categoriaAcervoApi'
 import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 import { useNotificationStore } from '@/stores/notification.js'
-
 export const useCategoriasStore = defineStore('categorias', () => {
   const loadingStore = useLoading()
   const modalStore = useModalStore()
@@ -16,7 +15,6 @@ export const useCategoriasStore = defineStore('categorias', () => {
     nome: '',
     descricao: '',
   })
-
   const fetchCategorias = async () => {
     loadingStore.isLoading = true
     try {
@@ -28,31 +26,25 @@ export const useCategoriasStore = defineStore('categorias', () => {
       loadingStore.isLoading = false
     }
   }
-
   const checkDuplicateCategoria = (nome) => {
     return categorias.value.some(
       (categoria) => categoria.nome.toLowerCase().trim() === nome.toLowerCase().trim(),
     )
   }
-
   const createCategoria = async (categoria) => {
     try {
-      // Check for duplicate category name
       if (checkDuplicateCategoria(categoria.nome)) {
         notificationStore.showWarning(`A categoria "${categoria.nome}" já existe no acervo!`)
         return false
       }
-
       loadingStore.isLoading = true
       const created = await categoriaAcervoApi.createCategoria(categoria)
       categorias.value.push(created)
-
       newCategoria.value = {
         id: null,
         nome: '',
         descricao: '',
       }
-
       modalStore.closeCreateModal()
       notificationStore.showSuccess(`Categoria "${categoria.nome}" criada com sucesso!`)
       loadingStore.isLoading = false
@@ -64,27 +56,21 @@ export const useCategoriasStore = defineStore('categorias', () => {
       return false
     }
   }
-
   const updateCategoria = async () => {
     try {
-      // Check for duplicate category name (excluding current category)
       const isDuplicate = categorias.value.some(
         (categoria) =>
           categoria.id !== modalStore.editingItem.id &&
           categoria.nome.toLowerCase().trim() === modalStore.editingItem.nome.toLowerCase().trim(),
       )
-
       if (isDuplicate) {
         notificationStore.showWarning(
           `A categoria "${modalStore.editingItem.nome}" já existe no acervo!`,
         )
         return false
       }
-
       loadingStore.isLoading = true
-
       await categoriaAcervoApi.updateCategoria(modalStore.editingItem)
-
       await fetchCategorias()
       modalStore.closeCreateModal()
       notificationStore.showSuccess(
@@ -99,16 +85,12 @@ export const useCategoriasStore = defineStore('categorias', () => {
       return false
     }
   }
-
   const deleteCategoria = async (id) => {
     try {
       loadingStore.isLoading = true
-
       await categoriaAcervoApi.deleteCategoria(id)
-
       const deletedCategoria = categorias.value.find((categoria) => categoria.id === id)
       categorias.value = categorias.value.filter((categoria) => categoria.id !== id)
-
       modalStore.closeConfirmDeleteModal()
       notificationStore.showSuccess(
         `Categoria "${deletedCategoria?.nome || ''}" excluída com sucesso!`,
@@ -120,7 +102,6 @@ export const useCategoriasStore = defineStore('categorias', () => {
       loadingStore.isLoading = false
     }
   }
-
   return {
     categorias,
     newCategoria,

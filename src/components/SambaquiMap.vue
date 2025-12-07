@@ -4,34 +4,25 @@ import { useRouter } from 'vue-router';
 import FooterSection from '@/components/FooterSection.vue';
 import HeaderNav from '@/components/HeaderNav.vue';
 import { useItensAcervoStore } from '@/stores/itensAcervo';
-
 const router = useRouter();
 const itensAcervoStore = useItensAcervoStore();
 const mapContainer = ref(null);
 const statusMessage = ref('Status: Selecione uma região ou realize uma busca.');
 const selectedRegion = ref('Joinville/SC');
 const mapLoaded = ref(false);
-
 let mapInstance = null;
 let markerLayer = null;
 let highlightLayer = null;
 const activeSambaqui = ref(null);
-
 const relatedItems = computed(() => {
     if (!activeSambaqui.value) return [];
-    
     return itensAcervoStore.itensAcervo.filter(item => {
         if (!item.localizacao_atual) return false;
-        
-        // Tenta encontrar correspondência entre o nome do sambaqui no mapa e a localização no acervo
         const localName = (item.localizacao_atual.nome_local || item.localizacao_atual.nome || '').toLowerCase();
         const mapName = activeSambaqui.value.nome.toLowerCase();
-        
-        // Verifica se um contém o outro para maior flexibilidade
         return localName.includes(mapName) || mapName.includes(localName);
     });
 });
-
 const SAMBAQUIS = [
     { id: 1, nome: "Sambaqui Rio Comprido", lat: -26.3110, lon: -48.8650, cidade: "Joinville/SC" },
     { id: 2, nome: "Sambaqui Cubatão", lat: -26.2500, lon: -48.7800, cidade: "Joinville/SC" },
@@ -90,7 +81,6 @@ const SAMBAQUIS = [
     { id: 60, nome: "Sambaqui Parnaíba", lat: -2.9000, lon: -41.7700, cidade: "Parnaíba/PI" },
     { id: 100, nome: "Sambaqui Total View", lat: -15.0000, lon: -45.0000, cidade: "Mostrar Todos" },
 ];
-
 const CITIES_CONFIG = {
     "Joinville/SC": { coords: { lat: -26.3110, lng: -48.8650 }, zoom: 10 },
     "Barra do Sul/SC": { coords: { lat: -26.4700, lng: -48.6500 }, zoom: 10 },
@@ -144,42 +134,33 @@ const CITIES_CONFIG = {
     "Parnaíba/PI": { coords: { lat: -2.9000, lng: -41.7700 }, zoom: 10 },
     "Mostrar Todos": { coords: { lat: -15.0000, lng: -45.0000 }, zoom: 4 }
 };
-
 const uniqueCities = computed(() => {
     const cities = [...new Set(SAMBAQUIS.map(s => s.cidade).filter(c => c !== "Mostrar Todos"))];
     cities.sort();
     return ['Mostrar Todos', ...cities];
 });
-
 const searchInput = ref('');
 const searchResults = ref([]);
 let searchDebounceTimeout = null;
-
 function normalizeCoord(value) {
     const num = parseFloat(value.replace(',', '.').trim());
     return isNaN(num) ? null : num;
 }
-
 function performSearch() {
     activeSambaqui.value = null;
-
     if (!searchInput.value) {
         searchResults.value = [];
         return;
     }
-
     const term = searchInput.value.toLowerCase();
     let results = [];
-
     results = SAMBAQUIS.filter(s =>
         s.nome.toLowerCase().includes(term) || s.cidade.toLowerCase().includes(term)
     );
-
     const parts = term.split(/[\s,]+/);
     if (parts.length === 2) {
         const lat = normalizeCoord(parts[0]);
         const lon = normalizeCoord(parts[1]);
-
         if (lat !== null && lon !== null) {
             const coordResults = SAMBAQUIS.filter(s =>
                 s.lat.toFixed(2) === lat.toFixed(2) && s.lon.toFixed(2) === lon.toFixed(2)
@@ -187,39 +168,30 @@ function performSearch() {
             results = [...new Set([...coordResults, ...results])];
         }
     }
-
     searchResults.value = results.filter(s => s.id !== 100);
-
     statusMessage.value = `Status: ${searchResults.value.length} resultados encontrados.`;
 }
-
 const handleSearchInput = (event) => {
     searchInput.value = event.target.value;
     clearTimeout(searchDebounceTimeout);
     searchDebounceTimeout = setTimeout(performSearch, 300);
 };
-
 function clearMarkers() {
     if (markerLayer) markerLayer.clearLayers();
     if (highlightLayer) highlightLayer.clearLayers();
 }
-
 function displaySambaquis(sambaquis) {
     if (typeof L === 'undefined' || !mapInstance) return;
-
     clearMarkers();
     let bounds = [];
-
     sambaquis.forEach(sambaqui => {
         const popupContent = `
             <div class="font-bold text-base text-gray-800">${sambaqui.nome}</div>
             <div class="text-xs text-gray-500 mb-1">${sambaqui.cidade}</div>
             <div class="text-xs font-mono">Lat: ${sambaqui.lat.toFixed(4)}, Lon: ${sambaqui.lon.toFixed(4)}</div>
         `;
-
         const lat = sambaqui.lat;
         const lng = sambaqui.lon;
-
         const marker = L.marker([lat, lng], {
             icon: L.divIcon({
                 className: 'sambaqui-marker',
@@ -228,60 +200,42 @@ function displaySambaquis(sambaquis) {
                 iconAnchor: [9, 9]
             })
         }).addTo(markerLayer);
-
         marker.bindPopup(popupContent);
-
         marker.on('click', () => {
             selectSambaquiOnMap(sambaqui);
         });
-
         bounds.push([lat, lng]);
     });
-
     if (bounds.length > 0 && selectedRegion.value === 'Mostrar Todos') {
         mapInstance.fitBounds(bounds, { padding: [20, 20] });
     }
 }
-
 function selectSambaquiOnMap(sambaqui, zoomTo = false) {
     if (typeof L === 'undefined' || !mapInstance) return;
-
     activeSambaqui.value = sambaqui;
-
     if (highlightLayer) highlightLayer.clearLayers();
-
     const lat = sambaqui.lat;
     const lng = sambaqui.lon;
-
     const highlightIcon = L.divIcon({
         className: 'sambaqui-marker-highlight',
         html: '<div class="bg-red-600 w-4 h-4 rounded-full border-2 border-white shadow-lg animate-pulse"></div>',
         iconSize: [20, 20],
         iconAnchor: [10, 10]
     });
-
     L.marker([lat, lng], { icon: highlightIcon }).addTo(highlightLayer);
-
     if (zoomTo) {
         mapInstance.setView([lat, lng], 14);
     }
 }
-
-
 function centerMapOnSelectedRegion() {
     if (typeof L === 'undefined' || !mapInstance) return;
-
     const region = selectedRegion.value;
     const config = CITIES_CONFIG[region];
     activeSambaqui.value = null;
     searchResults.value = [];
-
     if (highlightLayer) highlightLayer.clearLayers();
-
     if (!config) return;
-
     mapInstance.setView([config.coords.lat, config.coords.lng], config.zoom);
-
     if (region === 'Mostrar Todos') {
         const allSambaquis = SAMBAQUIS.filter(s => s.id !== 100);
         displaySambaquis(allSambaquis);
@@ -292,16 +246,13 @@ function centerMapOnSelectedRegion() {
         statusMessage.value = `Status: Exibindo ${regionSambaquis.length} sambaquis em ${region}.`;
     }
 }
-
 const loadLeafletScript = () => {
     if (typeof L !== 'undefined') return Promise.resolve();
-
     return new Promise((resolve, reject) => {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
         document.head.appendChild(link);
-
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
         script.async = true;
@@ -312,46 +263,35 @@ const loadLeafletScript = () => {
         document.body.appendChild(script);
     });
 };
-
 function initializeMap() {
     if (typeof L === 'undefined' || !mapContainer.value) {
         statusMessage.value = "ERRO: Biblioteca Leaflet não carregada.";
         mapLoaded.value = false;
         return;
     }
-
     const initialCoords = CITIES_CONFIG['Joinville/SC'].coords;
-
     mapInstance = L.map(mapContainer.value, {
         center: [initialCoords.lat, initialCoords.lng],
         zoom: CITIES_CONFIG['Joinville/SC'].zoom,
     });
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(mapInstance);
-
     markerLayer = L.layerGroup().addTo(mapInstance);
     highlightLayer = L.layerGroup().addTo(mapInstance);
     mapLoaded.value = true;
-
     centerMapOnSelectedRegion();
-
     mapInstance.invalidateSize();
 }
-
 watch(selectedRegion, (newRegion) => {
     if (newRegion) {
         centerMapOnSelectedRegion();
     }
 });
-
 onMounted(async () => {
-    // Carrega os itens do acervo para cruzar com o mapa
     if (itensAcervoStore.itensAcervo.length === 0) {
         itensAcervoStore.fetchItens();
     }
-
     statusMessage.value = "Status: Carregando biblioteca de mapas...";
     try {
         await loadLeafletScript();
@@ -362,30 +302,22 @@ onMounted(async () => {
         mapLoaded.value = false;
     }
 });
-
 onUnmounted(() => {
     if (mapInstance) {
         mapInstance.remove();
     }
 });
 </script>
-
 <template>
     <div class="flex flex-col font-sans text-gray-800">
-
         <main class="px-4 md:px-8 max-w-7xl mx-auto w-full mt-12 mb-0">
-
             <div class="max-w-7xl mx-auto">
                 <h1 class="text-3xl font-bold text-gray-900 mb-8">Sambaqui Explorer Map (OpenStreetMap)</h1>
                 <p class="text-gray-600 mb-6">Visualização de sítios arqueológicos por região. Total de {{
                     SAMBAQUIS.length - 1 }} sambaquis mapeados.</p>
             </div>
-
             <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[40vh]">
-
                 <div class="lg:col-span-1 flex flex-col space-y-3">
-
-                    <!-- Card de busca -->
                     <div class="bg-white p-4 rounded-xl shadow-lg border-t-4 border-gray-400 flex-1">
                         <label for="search-input" class="block text-sm font-bold text-gray-700 mb-2">Busca Avançada
                             (Nome, Cidade, Lat/Lon)</label>
@@ -402,8 +334,6 @@ onUnmounted(() => {
                             </button>
                         </div>
                     </div>
-
-                    <!-- Card de região -->
                     <div class="bg-white p-3 rounded-xl shadow-lg border-t-4 border-teal-500 flex-1">
                         <label for="region-select" class="block text-sm font-bold text-gray-700 mb-3">
                             <svg class="w-5 h-10 inline mr-1 -mt-1 text-teal-600" fill="none" stroke="currentColor"
@@ -419,7 +349,6 @@ onUnmounted(() => {
                             class="w-full border-gray-300 rounded-lg shadow-sm focus:border-teal-500 focus:ring-teal-500 py-2.5 transition-all text-sm mb-4">
                             <option v-for="city in uniqueCities" :key="city" :value="city">{{ city }}</option>
                         </select>
-
                         <button @click="selectedRegion = 'Mostrar Todos'"
                             class="w-full bg-gradient-to-r from-gray-700 to-gray-900 text-white font-semibold py-2.5 px-4 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -429,8 +358,6 @@ onUnmounted(() => {
                             Ver Todos os Sítios
                         </button>
                     </div>
-
-                    <!-- Card de resultados de busca -->
                     <div v-if="searchResults.length > 0"
                         class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 flex-1 overflow-y-auto">
                         <h3 class="font-bold text-gray-900 mb-3 border-b pb-2">
@@ -455,8 +382,6 @@ onUnmounted(() => {
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Card de detalhes -->
                     <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-100 flex-1 overflow-y-auto"
                         :class="{ 'min-h-[120px]': searchResults.length === 0 }">
                         <h3 class="font-bold text-gray-900 mb-2 border-b pb-2">
@@ -472,15 +397,12 @@ onUnmounted(() => {
                                 <p>Latitude: {{ activeSambaqui.lat.toFixed(6) }}</p>
                                 <p>Longitude: {{ activeSambaqui.lon.toFixed(6) }}</p>
                             </div>
-
                             <div class="pt-2">
                                 <button @click="selectSambaquiOnMap(activeSambaqui, true)"
                                     class="text-sm text-blue-600 hover:underline">
                                     Centralizar no Mapa
                                 </button>
                             </div>
-
-                            <!-- Galeria de Imagens Relacionadas -->
                             <div v-if="relatedItems.length > 0" class="mt-4 border-t pt-3">
                                 <p class="text-sm font-bold text-gray-800 mb-2">Itens neste local ({{ relatedItems.length }}):</p>
                                 <div class="grid grid-cols-3 gap-2">
@@ -511,8 +433,6 @@ onUnmounted(() => {
                         </div>
                     </div>
                 </div>
-
-                <!-- Mapa -->
                 <div class="lg:col-span-2 h-full relative">
                     <div ref="mapContainer" class="map-container">
                         <div v-if="!mapLoaded"
@@ -531,31 +451,23 @@ onUnmounted(() => {
         </main>
     </div>
 </template>
-
 <style scoped>
-/* Altura total do container principal do grid para responsividade */
-/* h-[calc(100vh-185px)] COMPENSA O HEAD + PADDING PARA O LAYOUT MAIS APERTADO */
 .h-\[calc\(100vh-185px\)\] {
     height: calc(100vh - 12px); 
 }
-
-/* Estilo para garantir que o mapa tenha a altura correta E ocupe a coluna */
 .map-container {
-    height: 100%; /* Ocupa 100% da altura definida pelo grid pai */
+    height: 100%; 
     width: 100%;
     border-radius: 0.75rem; 
     box-shadow: 0 5px 10px -2px rgba(0, 0, 0, 0.1);
     position: relative; 
 }
-
-/* Corrige layout no mobile onde o grid colapsa */
 @media (max-width: 1023px) {
-    /* No mobile, a altura é reduzida, mas o mapa ainda precisa de uma altura definida */
     .h-\[calc\(100vh-185px\)\] {
-        height: auto; /* Deixa a altura flexível no mobile */
+        height: auto; 
     }
     .map-container {
-        height: 60vh; /* Altura fixa para o mapa no mobile */
+        height: 60vh; 
     }
 }
 </style>

@@ -3,22 +3,17 @@ import { ref, computed } from 'vue'
 import { useLoading } from '@/stores/loading.js'
 import { useRouter } from 'vue-router'
 import API from '@/services/axiosInterceptor.js'
-
 export const useAuth = defineStore('auth', () => {
   const loadingStore = useLoading()
   const router = useRouter()
-
   const error = ref(null)
   const user = ref(null)
   const accessToken = ref(localStorage.getItem('access_token') || null)
   const refreshToken = ref(localStorage.getItem('refresh_token') || null)
-
   const isLoggedIn = computed(() => !!localStorage.getItem('access_token'))
-
   const firstLetter = computed(() => {
     return user.value?.name?.charAt(0).toUpperCase() || null
   })
-
   const fetchCurrentUser = async () => {
     if (!accessToken.value) {
       user.value = null
@@ -31,7 +26,6 @@ export const useAuth = defineStore('auth', () => {
     })
     user.value = res.data
   }
-
   const login = async (username, password) => {
     error.value = null
     loadingStore.isLoading = true
@@ -40,13 +34,10 @@ export const useAuth = defineStore('auth', () => {
         username,
         password,
       })
-
       accessToken.value = response.data.access
       refreshToken.value = response.data.refresh
-
       localStorage.setItem('access_token', accessToken.value)
       localStorage.setItem('refresh_token', refreshToken.value)
-
       await fetchCurrentUser()
       router.push('/')
       loadingStore.isLoading = false
@@ -64,7 +55,6 @@ export const useAuth = defineStore('auth', () => {
       loadingStore.isLoading = false
     }
   }
-
   const register = async (userData) => {
     error.value = null
     loadingStore.isLoading = true
@@ -72,7 +62,6 @@ export const useAuth = defineStore('auth', () => {
       const nameParts = userData.name.split(' ')
       const firstName = nameParts[0]
       const lastName = nameParts.slice(1).join(' ')
-
       const payload = {
         username: userData.username,
         email: userData.email,
@@ -80,7 +69,6 @@ export const useAuth = defineStore('auth', () => {
         first_name: firstName,
         last_name: lastName,
       }
-
       await API.post('users/', payload)
       await login(userData.username, userData.password)
     } catch (err) {
@@ -103,14 +91,12 @@ export const useAuth = defineStore('auth', () => {
       loadingStore.isLoading = false
     }
   }
-
   const logout = () => {
     user.value = null
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     error.value = null
   }
-
   return {
     error,
     user,

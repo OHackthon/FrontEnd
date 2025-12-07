@@ -3,11 +3,9 @@ import { ref } from 'vue'
 import HeaderNav from '../components/HeaderNav.vue'
 import FooterSection from '../components/FooterSection.vue'
 </script>
-
 <template>
   <div class="min-h-screen flex flex-col bg-white">
     <HeaderNav />
-
     <main class="flex-grow">
       <div class="bg-gray-100 py-20">
         <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,7 +13,6 @@ import FooterSection from '../components/FooterSection.vue'
           <p class="text-lg text-gray-600 font-light">Nossa missão, história e dedicação à arqueologia costeira.</p>
         </div>
       </div>
-
       <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div class="lg:col-span-2">
           <h2 class="text-3xl font-serif font-light text-gray-800 mb-6">A História Vinda do Mar</h2>
@@ -29,7 +26,6 @@ import FooterSection from '../components/FooterSection.vue'
             "Cada concha, cada osso, cada ferramenta de pedra nos conta uma história de resiliência e engenhosidade." - Curadoria.
           </blockquote>
         </div>
-
         <aside class="lg:col-span-1">
           <div class="p-6 bg-gray-50 border border-gray-200">
             <h3 class="text-lg font-serif font-medium text-gray-900 mb-4 border-b pb-2">Informações Chave</h3>
@@ -42,6 +38,5 @@ import FooterSection from '../components/FooterSection.vue'
         </aside>
       </div>
     </main>
-
   </div>
 </template>

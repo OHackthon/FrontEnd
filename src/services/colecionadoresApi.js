@@ -1,5 +1,4 @@
 import API from '@/services/axiosInterceptor.js'
-
 export default class ColecionadoresApi {
     async fetchColecionadores() {
         const response = await API.get('colecionadores/')

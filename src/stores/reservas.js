@@ -5,31 +5,26 @@ import { useLoading } from '@/stores/loading.js'
 import { useModalStore } from '@/stores/modal.js'
 import { useAuth } from '@/stores/auth.js'
 import { useNotificationStore } from '@/stores/notification.js'
-
 const authStore = useAuth()
 const loadingStore = useLoading()
 const modalStore = useModalStore()
 const notificationStore = useNotificationStore()
 const reservasApi = new ReservasApi()
-
 export const useReservasStore = defineStore('reservas', () => {
   const reservas = ref([])
-
   const movimentoOptions = ref([
     { value: 'INTERNO', label: 'Movimentação interna' },
     { value: 'EXTERNA', label: 'Saída externa / Empréstimo' },
   ])
-
   const newReserva = ref({
     id: null,
-    item: null, //fk
-    responsavel: authStore.user, //fk
-    local_origem: null, //fk
-    local_destino: null, //fk
+    item: null, 
+    responsavel: authStore.user, 
+    local_origem: null, 
+    local_destino: null, 
     data_movimentacao: new Date().toISOString(),
     tipo_movimento: '',
   })
-
   const fetchReservas = async () => {
     loadingStore.isLoading = true
     try {
@@ -41,32 +36,26 @@ export const useReservasStore = defineStore('reservas', () => {
       loadingStore.isLoading = false
     }
   }
-
   const createReserva = async (reserva) => {
     try {
       loadingStore.isLoading = true
-
-      // Ensure responsavel is set to current user ID
       if (!reserva.responsavel && authStore.user) {
         reserva.responsavel = authStore.user.id
       } else if (typeof reserva.responsavel === 'object' && reserva.responsavel !== null) {
         reserva.responsavel = reserva.responsavel.id
       }
-
       const created = await reservasApi.createReserva(reserva)
       reservas.value.push(created)
       notificationStore.showSuccess('Reserva criada com sucesso!')
-
       newReserva.value = {
         id: null,
-        item: null, //fk
-        responsavel: null, //fk
-        local_origem: null, //fk
-        local_destino: null, //fk
+        item: null, 
+        responsavel: null, 
+        local_origem: null, 
+        local_destino: null, 
         data_movimentacao: null,
         tipo_movimento: '',
       }
-
       loadingStore.isLoading = false
       return true
     } catch (err) {
@@ -76,13 +65,10 @@ export const useReservasStore = defineStore('reservas', () => {
       return false
     }
   }
-
   const updateReserva = async () => {
     try {
       loadingStore.isLoading = true
-
       await reservasApi.updateReserva(modalStore.editingItem)
-
       await fetchReservas()
       modalStore.closeCreateModal()
       loadingStore.isLoading = false
@@ -91,14 +77,11 @@ export const useReservasStore = defineStore('reservas', () => {
       loadingStore.isLoading = false
     }
   }
-
   const deleteReserva = async (id) => {
     try {
       loadingStore.isLoading = true
-
       await reservasApi.deleteReserva(id)
       reservas.value = reservas.value.filter((reserva) => reserva.id !== id)
-
       modalStore.closeConfirmDeleteModal()
       loadingStore.isLoading = false
     } catch (err) {
@@ -106,7 +89,6 @@ export const useReservasStore = defineStore('reservas', () => {
       loadingStore.isLoading = false
     }
   }
-
   return {
     reservas,
     newReserva,
