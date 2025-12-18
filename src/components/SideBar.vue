@@ -8,6 +8,7 @@ const menuItems = [
   { label: 'Gestão', path: '/dashboard/gestao', icon: 'collection' },
   { label: 'Categorias', path: '/dashboard/categorias', icon: 'category' },
   { label: 'Artefatos', path: '/dashboard/artefatos', icon: 'box' },
+  { label: 'Dados', path: '/dashboard/dados', icon: 'chart' },
   { label: 'Reservas', path: '/dashboard/reservas', icon: 'arrows' },
   { label: 'Usuários', path: '/dashboard/usuarios', icon: 'users' },
 ];

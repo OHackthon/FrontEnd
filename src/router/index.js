@@ -85,6 +85,11 @@ const router = createRouter({
           name: 'usuarios',
           component: () => import('../views/UserManagerView.vue'),
         },
+        {
+          path: 'dados',
+          name: 'dados',
+          component: () => import('../views/DataManagerView.vue'),
+        },
       ],
     },
   ],
