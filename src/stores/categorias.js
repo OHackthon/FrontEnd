@@ -12,8 +12,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
   const categorias = ref([])
   const newCategoria = ref({
     id: null,
-    nome: '',
-    descricao: '',
+    nome_categoria: '',
   })
   const fetchCategorias = async () => {
     loadingStore.isLoading = true
@@ -28,13 +27,15 @@ export const useCategoriasStore = defineStore('categorias', () => {
   }
   const checkDuplicateCategoria = (nome) => {
     return categorias.value.some(
-      (categoria) => categoria.nome.toLowerCase().trim() === nome.toLowerCase().trim(),
+      (categoria) => categoria.nome_categoria.toLowerCase().trim() === nome.toLowerCase().trim(),
     )
   }
   const createCategoria = async (categoria) => {
     try {
-      if (checkDuplicateCategoria(categoria.nome)) {
-        notificationStore.showWarning(`A categoria "${categoria.nome}" já existe no acervo!`)
+      if (checkDuplicateCategoria(categoria.nome_categoria)) {
+        notificationStore.showWarning(
+          `A categoria "${categoria.nome_categoria}" já existe no acervo!`,
+        )
         return false
       }
       loadingStore.isLoading = true
@@ -42,11 +43,10 @@ export const useCategoriasStore = defineStore('categorias', () => {
       categorias.value.push(created)
       newCategoria.value = {
         id: null,
-        nome: '',
-        descricao: '',
+        nome_categoria: '',
       }
       modalStore.closeCreateModal()
-      notificationStore.showSuccess(`Categoria "${categoria.nome}" criada com sucesso!`)
+      notificationStore.showSuccess(`Categoria "${categoria.nome_categoria}" criada com sucesso!`)
       loadingStore.isLoading = false
       return true
     } catch (err) {
@@ -61,11 +61,12 @@ export const useCategoriasStore = defineStore('categorias', () => {
       const isDuplicate = categorias.value.some(
         (categoria) =>
           categoria.id !== modalStore.editingItem.id &&
-          categoria.nome.toLowerCase().trim() === modalStore.editingItem.nome.toLowerCase().trim(),
+          categoria.nome_categoria.toLowerCase().trim() ===
+            modalStore.editingItem.nome_categoria.toLowerCase().trim(),
       )
       if (isDuplicate) {
         notificationStore.showWarning(
-          `A categoria "${modalStore.editingItem.nome}" já existe no acervo!`,
+          `A categoria "${modalStore.editingItem.nome_categoria}" já existe no acervo!`,
         )
         return false
       }
@@ -74,7 +75,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
       await fetchCategorias()
       modalStore.closeCreateModal()
       notificationStore.showSuccess(
-        `Categoria "${modalStore.editingItem.nome}" atualizada com sucesso!`,
+        `Categoria "${modalStore.editingItem.nome_categoria}" atualizada com sucesso!`,
       )
       loadingStore.isLoading = false
       return true
@@ -93,7 +94,7 @@ export const useCategoriasStore = defineStore('categorias', () => {
       categorias.value = categorias.value.filter((categoria) => categoria.id !== id)
       modalStore.closeConfirmDeleteModal()
       notificationStore.showSuccess(
-        `Categoria "${deletedCategoria?.nome || ''}" excluída com sucesso!`,
+        `Categoria "${deletedCategoria?.nome_categoria || ''}" excluída com sucesso!`,
       )
       loadingStore.isLoading = false
     } catch (err) {

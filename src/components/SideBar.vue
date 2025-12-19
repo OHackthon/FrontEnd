@@ -8,7 +8,11 @@ const menuItems = [
   { label: 'Gestão', path: '/dashboard/gestao', icon: 'collection' },
   { label: 'Categorias', path: '/dashboard/categorias', icon: 'category' },
   { label: 'Artefatos', path: '/dashboard/artefatos', icon: 'box' },
-  { label: 'Dados', path: '/dashboard/dados', icon: 'chart' },
+  { label: 'Coleções', path: '/dashboard/colecoes', icon: 'collection' },
+  { label: 'Localizações', path: '/dashboard/localizacoes', icon: 'location' },
+  { label: 'Matérias Primas', path: '/dashboard/materias-primas', icon: 'box' },
+  { label: 'Subtipos', path: '/dashboard/subtipos', icon: 'category' },
+  { label: 'Colecionadores', path: '/dashboard/colecionadores', icon: 'users' },
   { label: 'Reservas', path: '/dashboard/reservas', icon: 'arrows' },
   { label: 'Usuários', path: '/dashboard/usuarios', icon: 'users' },
 ];
@@ -58,6 +62,9 @@ const handleLogout = () => {
           </template>
           <template v-if="item.icon === 'category'">
             <path d="M19 11H5m14-7H5a2 2 0 00-2 2v11a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2zM9 7v4m6-4v4"/>
+          </template>
+          <template v-if="item.icon === 'location'">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
           </template>
           <template v-if="item.icon === 'arrows'">
             <path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>

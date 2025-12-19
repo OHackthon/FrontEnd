@@ -4,16 +4,19 @@ import { useItensAcervoStore } from "@/stores/itensAcervo";
 import { useColecoesStore } from "@/stores/colecoes";
 import { useCategoriasStore } from "@/stores/categorias";
 import { useLocalizacoesStore } from "@/stores/localizacoes";
+import { useMateriasPrimasStore } from "@/stores/materiasPrimas";
 const itensStore = useItensAcervoStore();
 const colecoesStore = useColecoesStore();
 const categoriasStore = useCategoriasStore();
 const localizacoesStore = useLocalizacoesStore();
+const materiasPrimasStore = useMateriasPrimasStore();
 onMounted(async () => {
   await Promise.all([
     itensStore.fetchItens(),
     colecoesStore.fetchColecoes(),
     categoriasStore.fetchCategorias(),
     localizacoesStore.fetchLocalizacoes(),
+    materiasPrimasStore.fetchMateriasPrimas(),
   ]);
 });
 const searchQuery = ref("");
@@ -49,6 +52,7 @@ const openModal = (mode, item = null) => {
       id: null,
       titulo: "",
       colecao: null,
+      materia_prima: null,
       categoria_acervo: null,
       localizacao_atual: null,
       descricao: "",
@@ -355,6 +359,18 @@ function formatarData(dataIso) {
               <option :value="null">Selecione...</option>
               <option v-for="col in colecoesStore.colecoes" :key="col.id" :value="col.id">
                 {{ col.nome_colecao }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Matéria Prima</label>
+            <select
+              v-model="currentItem.materia_prima"
+              class="w-full rounded-lg border border-gray-300 p-2.5 focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] outline-none"
+            >
+              <option :value="null">Selecione...</option>
+              <option v-for="mat in materiasPrimasStore.materiasPrimas" :key="mat.id" :value="mat.id">
+                {{ mat.materia }}
               </option>
             </select>
           </div>

@@ -86,9 +86,29 @@ const router = createRouter({
           component: () => import('../views/UserManagerView.vue'),
         },
         {
-          path: 'dados',
-          name: 'dados',
-          component: () => import('../views/DataManagerView.vue'),
+          path: 'colecoes',
+          name: 'colecoes',
+          component: () => import('../views/ColecoesView.vue'),
+        },
+        {
+          path: 'localizacoes',
+          name: 'localizacoes',
+          component: () => import('../views/LocalizacoesView.vue'),
+        },
+        {
+          path: 'materias-primas',
+          name: 'materias-primas',
+          component: () => import('../views/MatériasPrimasView.vue'),
+        },
+        {
+          path: 'subtipos',
+          name: 'subtipos',
+          component: () => import('../views/SubtiposView.vue'),
+        },
+        {
+          path: 'colecionadores',
+          name: 'colecionadores',
+          component: () => import('../views/ColecionadoresView.vue'),
         },
       ],
     },

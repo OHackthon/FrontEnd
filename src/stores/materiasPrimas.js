@@ -15,8 +15,8 @@ export const useMateriasPrimasStore = defineStore('materiasPrimas', () => {
   const fetchMateriasPrimas = async () => {
     loadingStore.isLoading = true
     try {
-      const choicesData = await materiasPrimasApi.fetchMateriasPrimasChoices()
-      materiasPrimas.value = choicesData
+      const data = await materiasPrimasApi.fetchMateriasPrimas()
+      materiasPrimas.value = data
     } catch (error) {
       console.error('Erro ao buscar matérias-primas:', error)
     } finally {
