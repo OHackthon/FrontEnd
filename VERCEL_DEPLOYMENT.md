@@ -20,9 +20,7 @@ Depois de importar o projeto:
 
 | Name | Value |
 |------|-------|
-| `VITE_API_BASE_URL` | `https://hackathon-backend-XXXX.onrender.com/api/` |
-
-*(Substitua `XXXX` pela URL real do seu backend no Render)*
+| `VITE_API_BASE_URL` | `https://hackathon-backend-48f7.onrender.com/api/` |
 
 ---
 
@@ -62,12 +60,11 @@ Seu backend precisa aceitar requisições do Vercel:
 2. Selecione **hackathon-backend**
 3. Vá em **Environment**
 4. Procure por **ALLOWED_HOSTS**
-5. Adicione o domínio do seu Vercel:
-
-Exemplo:
+6. Atualize para incluir seu domínio do Vercel. Exemplo:
 ```
 *.onrender.com,localhost,127.0.0.1,seu-frontend.vercel.app
 ```
+(Você descobrirá a URL exata do Vercel após o deploy)
 
 6. Clique em **Save** (Render vai redeploy)
 
@@ -88,7 +85,7 @@ Se tudo funcionar ✅, você está pronto!
 | Etapa | Local | Produção |
 |-------|-------|----------|
 | Frontend | `npm run dev` | Vercel |
-| API Base URL | `http://localhost:8000/api/` | `https://hackathon-backend-XXXX.onrender.com/api/` |
+| API Base URL | `http://localhost:8000/api/` | `https://hackathon-backend-48f7.onrender.com/api/` |
 | Environment | `.env.local` | Vercel Dashboard |
 | Database | Neon PostgreSQL | Neon PostgreSQL |
 
