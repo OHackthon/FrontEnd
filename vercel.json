@@ -1,10 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "env": {
-    "VITE_API_BASE_URL": {
-      "description": "URL base da API Django no Render"
-    }
-  },
-  "envPrefix": "VITE_"
+  "outputDirectory": "dist"
 }
